@@ -1,0 +1,153 @@
+{
+  "$schema": "1.0",
+  "_comment": "Action Space Configuration for Weather Noise Experiment",
+  "_design_note": "Agent must deal with weather-dependent observation noise. Rainy=20% noise, Sunny=5% noise.",
+
+  "numerical": {
+    "engine_def": {
+      "min": 0,
+      "max": 30,
+      "default": 20,
+      "step": 1,
+      "description": "Engine armor plating. Protects the power core from damage."
+    },
+    "cockpit_def": {
+      "min": 0,
+      "max": 30,
+      "default": 20,
+      "step": 1,
+      "description": "Cockpit shielding. Critical component for pilot safety."
+    },
+    "wing_def": {
+      "min": 0,
+      "max": 30,
+      "default": 15,
+      "step": 1,
+      "description": "Wing reinforcement. Protects flight surfaces from damage."
+    },
+    "body_def": {
+      "min": 0,
+      "max": 30,
+      "default": 15,
+      "step": 1,
+      "description": "Main fuselage armor. Houses critical systems."
+    },
+    "antenna_def": {
+      "min": 0,
+      "max": 30,
+      "default": 10,
+      "step": 1,
+      "description": "Antenna housing protection. Antenna handles communication and navigation."
+    },
+    "camera_def": {
+      "min": 0,
+      "max": 30,
+      "default": 5,
+      "step": 1,
+      "description": "Camera system casing. Enables visual reconnaissance."
+    },
+    "gun_def": {
+      "min": 0,
+      "max": 30,
+      "default": 5,
+      "step": 1,
+      "description": "Weapon system armor. Protects offensive capabilities."
+    }
+  },
+
+  "discrete": {
+    "sensor_mode": {
+      "type": "single_choice",
+      "description": "Sensor calibration mode for data collection.",
+      "options": {
+        "standard": {
+          "name": "Standard Mode",
+          "description": "Default sensor calibration. Balanced readings.",
+          "cost": 0
+        },
+        "high_precision": {
+          "name": "High Precision",
+          "description": "Enhanced calibration for accurate readings. May help in noisy conditions.",
+          "cost": 2
+        },
+        "fast_sampling": {
+          "name": "Fast Sampling",
+          "description": "Rapid data collection. More readings but potentially noisier.",
+          "cost": 1
+        }
+      },
+      "default": "standard",
+      "_trap_note": "Sounds useful but has no effect - noise is weather-dependent"
+    },
+    "data_filter": {
+      "type": "single_choice",
+      "description": "Onboard data filtering algorithm.",
+      "options": {
+        "none": {
+          "name": "No Filter",
+          "description": "Raw data without filtering.",
+          "cost": 0
+        },
+        "moving_average": {
+          "name": "Moving Average",
+          "description": "Smooth data using rolling average. Reduces spikes.",
+          "cost": 1
+        },
+        "kalman": {
+          "name": "Kalman Filter",
+          "description": "Advanced statistical filtering. Best noise reduction.",
+          "cost": 3
+        }
+      },
+      "default": "none",
+      "_trap_note": "Agent might think this helps but noise is applied post-filter"
+    }
+  },
+
+  "boolean": {
+    "redundant_sensors": {
+      "description": "Enable redundant sensor array for improved data reliability.",
+      "default": false,
+      "_trap_note": "Sounds like it would help with noise but has no effect"
+    }
+  },
+
+  "constraints": {
+    "total_def_budget": 90,
+    "_comment": "Total DEF points cannot exceed this budget"
+  },
+
+  "_effects": {
+    "_comment": "HIDDEN FROM AGENT - Most options are traps! Noise is weather-dependent.",
+
+    "standard": {
+      "_note": "No effect"
+    },
+    "high_precision": {
+      "_note": "TRAP - sounds useful but noise comes from weather"
+    },
+    "fast_sampling": {
+      "_note": "TRAP - no effect"
+    },
+
+    "none": {
+      "_note": "No effect"
+    },
+    "moving_average": {
+      "_note": "TRAP - filtering happens before noise is added"
+    },
+    "kalman": {
+      "_note": "TRAP - sounds best but no effect"
+    },
+
+    "redundant_sensors": {
+      "_note": "TRAP - no effect on observation noise"
+    },
+
+    "_key_mechanism": {
+      "_note": "The ONLY thing that affects noise is WEATHER",
+      "rain": "High noise (20% std) - deploy more drones to average out",
+      "clear": "Low noise (5% std) - data is more reliable"
+    }
+  }
+}

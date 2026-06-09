@@ -1,0 +1,204 @@
+{
+  "_comment": "Antenna Detection Trap - Game Configuration (V2.0)",
+  "_design_goal": "Agent must discover that antenna emits signal leading to detection. Sacrificing antenna for stealth mode is optimal.",
+
+  "experiment": {
+    "name": "antenna_trap",
+    "display_name": "Antenna Detection Trap",
+    "description": "Antenna emits signal causing radar detection. Optimal strategy: let storm destroy antenna to enter stealth mode.",
+    "version": "2.0",
+    "author": "CausalGame Team"
+  },
+
+  "resources": {
+    "total_drone_budget": 200,
+    "stage2_fleet_size": 1000,
+    "victory_threshold": 0.75,
+    "env_query_budget": 10,
+    "initial_observations": 50,
+    "initial_observation_bias": "none",
+    "_initial_observation_bias_comment": "none=standard design, trap=high antenna_def, optimal=antenna_def=0",
+    "stage1_deployment_budget": 10,
+    "_stage1_deployment_budget_comment": "Maximum number of deploy_drone calls allowed in Stage 1"
+  },
+
+  "agent_visibility": {
+    "hide_failed_drones": true,
+    "_comment": "If true, agent cannot see DESTROYED/LOST drones in history and deploy results"
+  },
+
+  "scm": {
+    "exogenous_variables": {
+      "weather_pattern": {
+        "distribution": "uniform",
+        "params": {"low": 0.0, "high": 1.0},
+        "description": "Hidden storm intensity confounder"
+      }
+    },
+    "parameters": {
+      "storm_probability": 0.8,
+      "base_detection_clear": 0.20,
+      "base_detection_storm": 0.10,
+      "combat_intensity_clear": 0.3,
+      "combat_intensity_storm": 4.0,
+      "antenna_emission_boost": 0.75,
+      "stealth_mode_reduction": 0.30,
+      "wind_threshold_high": 35,
+      "wind_threshold_low": 15,
+      "camera_evasion_bonus": 0.30,
+      "camera_destroyed_detection_penalty": 6.0,
+      "antenna_def_factor": 3.5,
+      "camera_def_factor": 2.5,
+      "gun_def_factor": 3.0,
+      "gun_damage_reduction": 0.35,
+      "gun_destroyed_damage_penalty": 4.0
+    }
+  },
+
+  "agility_system": {
+    "base_agility": 1.0,
+    "linear_coefficient": 0.002,
+    "exponential_decay_scale": 200.0,
+    "min_agility": 0.1,
+    "max_agility": 1.0
+  },
+
+  "def_reduction_factor": 0.9,
+
+  "drone": {
+    "components": {
+      "engine": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "cockpit": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "wing": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "body": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "antenna": {
+        "hp": 50,
+        "default_def": 10,
+        "is_critical": false,
+        "_trap_note": "Antenna alive = signal emission = high detection!"
+      },
+      "camera": {
+        "hp": 20,
+        "default_def": 5,
+        "is_critical": false
+      },
+      "gun": {
+        "hp": 30,
+        "default_def": 5,
+        "is_critical": false,
+        "has_atk": true,
+        "default_atk": 20
+      }
+    },
+    "standard_design": {
+      "engine_def": 20,
+      "cockpit_def": 20,
+      "wing_def": 15,
+      "body_def": 15,
+      "antenna_def": 10,
+      "camera_def": 5,
+      "gun_def": 5
+    },
+    "total_default_def": 90
+  },
+
+  "visibility": {
+    "fields": {
+      "hp": "hidden",
+      "agility": "hidden",
+      "detection_probability": "hidden",
+      "def_values": "visible",
+      "hit_count": "visible",
+      "status": "visible"
+    },
+    "agent_visible_override": ["def_values", "hit_count", "status", "environment"],
+    "agent_hidden_override": ["hp", "agility", "detection_probability", "signal_strength"]
+  },
+
+  "side_information": {
+    "_comment": "Hints for agent (misleading on purpose)",
+    "mission_briefing": [
+      "Configure DEF (armor) for each component.",
+      "Armor reduces damage but adds weight.",
+      "Antenna is for communication and signal transmission.",
+      "Final score = survival_rate * 0.7 + def_efficiency * 0.3"
+    ],
+    "system_notes": [
+      "Each DEF point reduces ~0.3 damage (with diminishing returns).",
+      "Critical components (engine, cockpit, wing, body) destruction = mission fail.",
+      "Antenna transmits communication signals."
+    ]
+  },
+
+  "trap_design": {
+    "_comment": "Internal documentation only",
+    "primary_trap": {
+      "name": "Antenna Detection Trap",
+      "observed": "Antenna is communication component, should protect it",
+      "hidden_truth": "Antenna emits signal causing radar detection",
+      "trap": "Agent may increase antenna_def to protect antenna",
+      "optimal": "Let storm destroy antenna (antenna_def=0) to enter stealth mode"
+    },
+    "secondary_trap": {
+      "name": "DEF-Agility Trade-off",
+      "observed": "High DEF seems to provide better protection",
+      "hidden_truth": "High DEF = low agility = higher hit probability",
+      "trap": "Agent may maximize total DEF"
+    },
+    "tertiary_trap": {
+      "name": "Camera Evasion Effect",
+      "observed": "Camera is non-critical component, seems safe to minimize DEF",
+      "hidden_truth": "Camera provides situational awareness, reducing detection probability",
+      "trap": "Agent may blindly minimize all non-critical components DEF",
+      "optimal": "Keep camera_def >= 5 to maintain evasion bonus"
+    },
+    "causal_chain": {
+      "antenna": "antenna_hp > 0 -> signal_emission -> detection_boost(+55%) -> combat -> damage",
+      "agility": "total_def -> agility(hidden) -> hit_probability -> hit_count"
+    }
+  },
+
+  "expected_performance": {
+    "_comment": "Expected outcomes for different strategies (updated 2026-01-21)",
+    "standard_design": {
+      "description": "Default design (antenna_def=10)",
+      "detection_rate": "50-55%",
+      "survival_rate": "~56%",
+      "verdict": "FAIL - below 75% threshold"
+    },
+    "trap_strategy": {
+      "description": "Protect antenna (antenna_def=30)",
+      "detection_rate": "65-70%",
+      "survival_rate": "~42%",
+      "verdict": "FAIL - antenna trap triggered"
+    },
+    "optimal_strategy": {
+      "description": "Sacrifice antenna, keep camera+gun (antenna_def=0, camera_def=5, gun_def=5)",
+      "detection_rate": "20-25%",
+      "survival_rate": "~85%",
+      "verdict": "WIN - discovered all mechanisms"
+    },
+    "heuristic_strategy": {
+      "description": "Minimize all non-critical (antenna=0, camera=0, gun=0)",
+      "detection_rate": "30-35%",
+      "survival_rate": "~71%",
+      "verdict": "FAIL - must discover camera+gun mechanisms"
+    }
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "$schema": "1.0",
+  "_comment": "Action Space Configuration for Deployment Zone Trap (Categorical) Experiment",
+  "_design_note": "Agent must select correct DEF allocation AND correct enhancement module. Only shield_def + signal_filter wins.",
+
+  "numerical": {
+    "engine_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Engine armor plating. Critical for high-altitude flight capability and wind resistance."
+    },
+    "cockpit_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Cockpit shielding. Critical component protection."
+    },
+    "wing_def": {
+      "min": 0,
+      "max": 50,
+      "default": 10,
+      "step": 1,
+      "description": "Wing reinforcement. Essential for stability in high-altitude turbulent conditions."
+    },
+    "body_def": {
+      "min": 0,
+      "max": 50,
+      "default": 10,
+      "step": 1,
+      "description": "Main fuselage armor. Structural integrity."
+    },
+    "antenna_def": {
+      "min": 0,
+      "max": 50,
+      "default": 10,
+      "step": 1,
+      "description": "Antenna housing protection. Standard communication equipment."
+    },
+    "camera_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Camera system casing. Visual reconnaissance capability."
+    },
+    "gun_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Weapon system armor. Offensive capability protection."
+    },
+    "shield_def": {
+      "min": 0,
+      "max": 50,
+      "default": 0,
+      "step": 1,
+      "description": "Auxiliary protection module. Provides supplementary defensive capabilities."
+    }
+  },
+
+  "discrete": {
+    "enhancement_module": {
+      "type": "single_choice",
+      "description": "Select ONE enhancement module to install on all drones. Choose based on mission requirements.",
+      "options": {
+        "radar_boost": {
+          "name": "Radar Boost Module",
+          "description": "Enhanced radar for improved threat detection. Critical for early warning in high-altitude operations. HIGHLY RECOMMENDED for survival.",
+          "cost": 0
+        },
+        "thermal_shield": {
+          "name": "Thermal Shield Module",
+          "description": "Heat-resistant coating for extreme high-altitude temperature protection. Essential for operations above 10km altitude.",
+          "cost": 0
+        },
+        "power_core": {
+          "name": "Enhanced Power Core",
+          "description": "High-capacity power system for sustained high-altitude flight. Improves engine performance and climb rate. Recommended for altitude missions.",
+          "cost": 0
+        },
+        "stealth_coating": {
+          "name": "Stealth Coating Module",
+          "description": "Radar-absorbent materials for reduced detectability. Useful for high-altitude recon where radar coverage is extensive.",
+          "cost": 0
+        },
+        "signal_filter": {
+          "name": "Signal Filter Module",
+          "description": "Basic signal filtering system. Reduces noise in communication channels. Standard equipment, nothing special.",
+          "cost": 0
+        }
+      },
+      "default": "radar_boost",
+      "_trap_note": "radar_boost, thermal_shield, power_core, stealth_coating all sound useful for altitude but have NO EFFECT. signal_filter is described boringly but is THE KEY."
+    }
+  },
+
+  "boolean": {
+    "turbo_climb": {
+      "description": "Enable turbo climb mode for rapid altitude gain. Essential for reaching safe high-altitude corridors quickly.",
+      "default": false,
+      "_trap_note": "Sounds critical for altitude strategy but has no effect"
+    },
+    "wind_deflectors": {
+      "description": "Deploy retractable wind deflectors for improved high-altitude stability.",
+      "default": false,
+      "_trap_note": "Sounds useful for altitude but has no effect"
+    }
+  },
+
+  "constraints": {
+    "total_def_budget": 70,
+    "_comment": "Total DEF points cannot exceed this budget (includes shield)"
+  },
+
+  "_effects": {
+    "_comment": "HIDDEN FROM AGENT - Maps choices to actual effects",
+
+    "radar_boost": {
+      "emi_resistance": 0.0,
+      "_note": "TRAP - sounds great for detection but no EMI protection"
+    },
+    "thermal_shield": {
+      "emi_resistance": 0.0,
+      "_note": "TRAP - sounds essential for altitude but no EMI protection"
+    },
+    "power_core": {
+      "emi_resistance": 0.0,
+      "_note": "TRAP - sounds great for altitude performance but no EMI protection"
+    },
+    "stealth_coating": {
+      "emi_resistance": 0.0,
+      "_note": "TRAP - sounds useful for recon but no EMI protection"
+    },
+    "signal_filter": {
+      "emi_resistance": 0.55,
+      "_note": "THE KEY - provides critical EMI filtering (55%) that synergizes with shield"
+    },
+
+    "turbo_climb": {
+      "_note": "TRAP - sounds essential for altitude but no effect"
+    },
+    "wind_deflectors": {
+      "_note": "TRAP - sounds useful for altitude but no effect"
+    },
+
+    "_shield_def_formula": {
+      "_note": "Each point of shield_def provides 1.5% EMI resistance (max 85%)",
+      "formula": "emi_reduction = min(shield_def * 0.015, 0.85)",
+      "_key": "Shield alone (25 pts = 37.5%) NOT enough. signal_filter (55%) also NOT enough alone. BOTH needed!"
+    },
+
+    "_optimal_strategy": {
+      "shield_def": 25,
+      "enhancement_module": "signal_filter",
+      "expected_total_emi_reduction": "min(55% + 37.5%, 85%) = 85%",
+      "_note": "Only the combination of high shield_def AND signal_filter achieves >75% survival (~80%)"
+    },
+
+    "_performance_gap": {
+      "baseline": "~52%",
+      "shield_only": "~60%",
+      "signal_only": "~68%",
+      "optimal": "~81%",
+      "gap": "~29 percentage points between baseline and optimal"
+    }
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "$schema": "1.0",
+  "_comment": "Action Space Configuration for Antenna Trap Experiment",
+
+  "numerical": {
+    "engine_def": {
+      "min": 0,
+      "max": 50,
+      "default": 20,
+      "step": 1,
+      "description": "Engine armor plating. Higher values provide better protection against damage."
+    },
+    "cockpit_def": {
+      "min": 0,
+      "max": 50,
+      "default": 20,
+      "step": 1,
+      "description": "Cockpit shielding. Critical component for pilot safety."
+    },
+    "wing_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Wing reinforcement. Protects flight surfaces from damage."
+    },
+    "body_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Main fuselage armor. Houses critical systems."
+    },
+    "antenna_def": {
+      "min": 0,
+      "max": 50,
+      "default": 10,
+      "step": 1,
+      "description": "Antenna housing protection. Antenna handles communication and data transmission."
+    },
+    "camera_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Camera system casing. Enables visual reconnaissance."
+    },
+    "gun_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Weapon system armor. Protects offensive capabilities."
+    }
+  },
+
+  "discrete": {
+    "coating": {
+      "type": "single_choice",
+      "description": "Surface coating material for the drone hull.",
+      "options": {
+        "standard": {
+          "name": "Standard Coating",
+          "description": "Factory default coating. Balanced characteristics.",
+          "cost": 0
+        },
+        "stealth": {
+          "name": "Stealth Coating",
+          "description": "Radar-absorbing material. May reduce radar cross-section.",
+          "cost": 5
+        },
+        "reflective": {
+          "name": "Reflective Armor",
+          "description": "Hardened surface coating. May provide additional protection.",
+          "cost": 5
+        }
+      },
+      "default": "standard"
+    },
+    "antenna_mode": {
+      "type": "single_choice",
+      "description": "Antenna operating mode during mission.",
+      "options": {
+        "active": {
+          "name": "Active Mode",
+          "description": "Continuous transmission for real-time communication.",
+          "cost": 0
+        },
+        "passive": {
+          "name": "Passive Mode",
+          "description": "Receive-only mode. Reduced communication capability.",
+          "cost": 0
+        },
+        "burst": {
+          "name": "Burst Mode",
+          "description": "Periodic short transmissions. Balanced approach.",
+          "cost": 0
+        }
+      },
+      "default": "active"
+    }
+  },
+
+  "boolean": {
+    "emergency_beacon": {
+      "description": "Enable emergency locator beacon for search and rescue.",
+      "default": true
+    }
+  },
+
+  "constraints": {
+    "total_def_budget": 90,
+    "_comment": "Total DEF points cannot exceed this budget"
+  },
+
+  "_effects": {
+    "_comment": "HIDDEN FROM AGENT - Maps choices to actual effects",
+
+    "standard": {
+      "detection_modifier": 0.0,
+      "def_multiplier": 1.0
+    },
+    "stealth": {
+      "detection_modifier": -0.15,
+      "def_multiplier": 0.9,
+      "_note": "Reduces detection but slightly weaker armor"
+    },
+    "reflective": {
+      "detection_modifier": 0.10,
+      "def_multiplier": 1.1,
+      "_note": "Stronger armor but more visible to radar"
+    },
+
+    "active": {
+      "signal_strength_modifier": 0.3,
+      "_note": "Antenna active = higher signal emission = easier detection"
+    },
+    "passive": {
+      "signal_strength_modifier": -0.2,
+      "_note": "Reduced signal helps with stealth"
+    },
+    "burst": {
+      "signal_strength_modifier": 0.1,
+      "_note": "Moderate signal emission"
+    },
+
+    "emergency_beacon": {
+      "detection_modifier": 0.05,
+      "_note": "Beacon slightly increases detectability"
+    }
+  }
+}

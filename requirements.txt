@@ -1,0 +1,14 @@
+anthropic>=0.40.0
+cryptography>=42.0.0
+fastapi==0.109.0
+google-genai>=1.0.0
+httpx<0.28
+numpy==1.26.4
+openai>=1.0.0
+pandas
+pyOpenSSL>=24.0.0
+pydantic==2.6.0
+python-dotenv
+requests==2.31.0
+tabulate
+uvicorn==0.27.0

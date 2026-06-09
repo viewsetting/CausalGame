@@ -1,0 +1,226 @@
+{
+  "_comment": "Antenna Detection Trap - Environment Variables Configuration (V2.0)",
+  "_design_goal": "Agent must discover antenna emission causes detection. Sacrificing antenna for stealth is optimal.",
+
+  "variable_categories": {
+    "latent": {
+      "_comment": "Latent variables - initially hidden, core targets for causal reasoning",
+      "is_latent": true,
+      "variables": {
+        "weather_pattern": {
+          "description": "Weather pattern index (0=clear, 1=storm)",
+          "type": "float",
+          "range": [0, 1],
+          "distribution": {"type": "uniform", "min": 0, "max": 1},
+          "initially_visible": false,
+          "discovery_hints": [
+            "weather pattern",
+            "storm index",
+            "meteorological state"
+          ]
+        },
+        "agility": {
+          "description": "Maneuverability index (computed from total DEF)",
+          "type": "float",
+          "range": [0.1, 1.0],
+          "distribution": {"type": "computed", "formula": "f(total_def)"},
+          "initially_visible": false,
+          "discovery_hints": [
+            "agility",
+            "maneuverability",
+            "mobility",
+            "evasion"
+          ]
+        },
+        "antenna_emitting": {
+          "description": "Is antenna emitting signal (determined by antenna_hp)",
+          "type": "boolean",
+          "distribution": {"type": "computed", "formula": "antenna_hp > 0"},
+          "initially_visible": false,
+          "discovery_hints": [
+            "antenna status",
+            "signal emission",
+            "transmission state"
+          ],
+          "_internal_note": "Core trap mechanism: antenna alive = detected"
+        }
+      }
+    },
+
+    "core": {
+      "_comment": "Core observable variables",
+      "variables": {
+        "wind_speed": {
+          "description": "Wind speed (km/h)",
+          "type": "float",
+          "range": [0, 120],
+          "distribution": {"type": "gaussian", "mean": 50, "std": 20},
+          "initially_visible": true,
+          "discovery_hints": ["wind", "wind speed", "gust"],
+          "_internal_note": "High wind can destroy low-DEF antenna, which is beneficial"
+        },
+        "humidity": {
+          "description": "Humidity (%)",
+          "type": "float",
+          "range": [0, 100],
+          "distribution": {"type": "gaussian", "mean": 60, "std": 15},
+          "initially_visible": true,
+          "discovery_hints": ["humidity", "moisture"]
+        },
+        "temperature": {
+          "description": "Temperature (C)",
+          "type": "float",
+          "range": [-30, 50],
+          "distribution": {"type": "gaussian", "mean": 15, "std": 12},
+          "initially_visible": true,
+          "discovery_hints": ["temperature", "temp"]
+        },
+        "visibility_range": {
+          "description": "Visibility range (%)",
+          "type": "float",
+          "range": [0, 100],
+          "distribution": {"type": "gaussian", "mean": 70, "std": 20},
+          "initially_visible": true,
+          "discovery_hints": ["visibility", "sight range"]
+        }
+      }
+    },
+
+    "proxy": {
+      "_comment": "Proxy variables - observable, correlated with latent variables",
+      "variables": {
+        "is_detected": {
+          "description": "Was drone detected by enemy",
+          "type": "boolean",
+          "distribution": {"type": "computed", "formula": "f(antenna_hp, agility, visibility)"},
+          "initially_visible": true,
+          "discovery_hints": [
+            "detected",
+            "spotted",
+            "radar contact"
+          ],
+          "_internal_note": "Key clue: detection rate high when antenna intact"
+        },
+        "combat_rounds": {
+          "description": "Number of combat rounds",
+          "type": "int",
+          "range": [0, 12],
+          "distribution": {"type": "computed", "formula": "f(is_detected, antenna_hp)"},
+          "initially_visible": true,
+          "discovery_hints": [
+            "combat rounds",
+            "engagement duration",
+            "fight length"
+          ],
+          "_internal_note": "Key clue: more rounds when antenna intact"
+        },
+        "hit_count": {
+          "description": "Number of times hit",
+          "type": "int",
+          "range": [0, 15],
+          "distribution": {"type": "computed", "formula": "f(agility, combat_rounds)"},
+          "initially_visible": true,
+          "discovery_hints": [
+            "hits",
+            "hit count",
+            "times hit"
+          ],
+          "correlation_hint": "Negatively correlated with agility, positively with combat_rounds"
+        },
+        "antenna_status": {
+          "description": "Antenna status at mission end",
+          "type": "string",
+          "values": ["intact", "damaged", "destroyed"],
+          "initially_visible": true,
+          "discovery_hints": [
+            "antenna status",
+            "antenna condition"
+          ],
+          "_internal_note": "Agent can observe antenna damage vs survival correlation"
+        }
+      }
+    },
+
+    "distractor": {
+      "_comment": "Distractor variables - no direct causal relation to outcome",
+      "variables": {
+        "moon_phase": {
+          "description": "Moon phase (0-1)",
+          "type": "float",
+          "range": [0, 1],
+          "distribution": {"type": "uniform", "min": 0, "max": 1},
+          "initially_visible": false,
+          "discovery_hints": ["moon", "lunar", "moon phase"]
+        },
+        "radio_noise": {
+          "description": "Radio noise level (dB)",
+          "type": "float",
+          "range": [-30, 10],
+          "distribution": {"type": "gaussian", "mean": -10, "std": 8},
+          "initially_visible": false,
+          "discovery_hints": ["radio", "noise", "interference"]
+        }
+      }
+    }
+  },
+
+  "causal_structure": {
+    "_comment": "True causal structure (for development reference only)",
+
+    "primary_mechanism": {
+      "name": "Antenna Detection Trap",
+      "chain": "antenna_hp > 0 -> antenna_emitting -> detection_boost -> is_detected -> combat_rounds -> damage -> survival",
+      "formula": "detection_prob = base + 0.55 * (antenna_hp / 50) if antenna_hp > 0 else base * 0.4",
+      "trap": "Antenna alive leads to detection, detection leads to more combat, more combat leads to more damage"
+    },
+
+    "secondary_mechanism": {
+      "name": "DEF-Agility Trade-off",
+      "chain": "total_def -> agility(hidden) -> hit_probability -> hit_count",
+      "formula": "agility = 1.0 - 0.002 * total_def * exp(-total_def/200)",
+      "trap": "High DEF reduces agility, increasing hit probability"
+    },
+
+    "combined_trap": {
+      "optimal_strategy": "antenna_def = 0 (let storm destroy antenna) + moderate total DEF (balance agility)",
+      "trap_strategy": "antenna_def = 30 (protect antenna) + high DEF -> double penalty"
+    }
+  },
+
+  "observable_clues": {
+    "_comment": "Clues agent can use to discover hidden mechanisms",
+    "clues": [
+      {
+        "observation": "Drones with damaged antenna have higher survival rate",
+        "implication": "Antenna presence may be detrimental"
+      },
+      {
+        "observation": "is_detected strongly correlates with antenna_status='intact'",
+        "implication": "Antenna causes detection"
+      },
+      {
+        "observation": "Low antenna_def drones have improved survival after storms",
+        "implication": "Letting antenna be destroyed by storm may be beneficial"
+      },
+      {
+        "observation": "High DEF drones get hit more often",
+        "implication": "Hidden agility variable exists"
+      }
+    ]
+  },
+
+  "discovery_difficulty": {
+    "easy": ["wind_speed", "is_detected", "combat_rounds", "hit_count", "antenna_status"],
+    "medium": ["visibility_range", "humidity", "temperature"],
+    "hard": ["agility", "antenna_emitting", "weather_pattern"],
+    "very_hard": ["moon_phase", "radio_noise"]
+  },
+
+  "natural_language_mappings": {
+    "antenna": ["antenna", "signal", "communication", "transmission"],
+    "detection": ["detected", "spotted", "radar", "found"],
+    "stealth": ["stealth", "hidden", "invisible", "undetected"],
+    "combat": ["combat", "battle", "engagement", "fight"],
+    "mobility": ["agility", "maneuverability", "mobility", "evasion"]
+  }
+}

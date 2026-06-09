@@ -1,0 +1,131 @@
+{
+  "_comment": "Weather Noise - Environment Variables Configuration",
+  "_design_goal": "Agent observes weather-dependent observation noise. Rainy=high noise (20%), Sunny=low noise (5%).",
+
+  "variable_categories": {
+    "latent": {
+      "_comment": "Latent variables - initially hidden",
+      "is_latent": true,
+      "variables": {
+        "weather_state": {
+          "description": "Current weather condition (0=sunny, 1=storm)",
+          "type": "float",
+          "range": [0, 1],
+          "distribution": {"type": "bernoulli", "stage1_p": 0.7, "stage2_p": 0.3},
+          "initially_visible": false,
+          "discovery_hints": [
+            "weather state",
+            "storm status",
+            "weather condition"
+          ]
+        },
+        "observation_noise": {
+          "description": "Current observation noise level",
+          "type": "float",
+          "range": [0.05, 0.20],
+          "distribution": {"type": "computed", "formula": "0.20 if storm else 0.05"},
+          "initially_visible": false,
+          "discovery_hints": [
+            "noise level",
+            "measurement error",
+            "data quality"
+          ]
+        }
+      }
+    },
+
+    "core": {
+      "_comment": "Core observable variables (subject to noise)",
+      "variables": {
+        "wind_speed": {
+          "description": "Wind speed (km/h) - may be noisy",
+          "type": "float",
+          "range": [0, 150],
+          "distribution": {"type": "weather_dependent", "sunny_mean": 20, "storm_mean": 60},
+          "initially_visible": true,
+          "discovery_hints": ["wind", "wind speed", "gust"],
+          "_noise_note": "Observed value = true value + N(0, noise_std * value)"
+        },
+        "humidity": {
+          "description": "Humidity (%) - may be noisy",
+          "type": "float",
+          "range": [0, 100],
+          "distribution": {"type": "weather_dependent", "sunny_mean": 45, "storm_mean": 82},
+          "initially_visible": true,
+          "discovery_hints": ["humidity", "moisture"]
+        },
+        "temperature": {
+          "description": "Temperature (C) - may be noisy",
+          "type": "float",
+          "range": [-10, 50],
+          "distribution": {"type": "weather_dependent", "sunny_mean": 27, "storm_mean": 15},
+          "initially_visible": true,
+          "discovery_hints": ["temperature", "temp"]
+        }
+      }
+    },
+
+    "proxy": {
+      "_comment": "Proxy variables - observable but subject to noise",
+      "variables": {
+        "hit_count": {
+          "description": "Number of times hit (may be noisy)",
+          "type": "int",
+          "range": [0, 15],
+          "distribution": {"type": "computed"},
+          "initially_visible": true,
+          "discovery_hints": ["hits", "hit count", "times hit"],
+          "_noise_note": "Observed value may differ from true value due to measurement noise"
+        },
+        "status": {
+          "description": "Survival status (small flip probability in noisy conditions)",
+          "type": "string",
+          "values": ["RETURNED", "DESTROYED", "LOST"],
+          "initially_visible": true,
+          "discovery_hints": ["status", "survival"],
+          "_noise_note": "May be flipped with probability proportional to noise level"
+        },
+        "def_remaining": {
+          "description": "Remaining DEF values after mission (if visible, subject to noise)",
+          "type": "dict",
+          "initially_visible": true,
+          "discovery_hints": ["def remaining", "armor status"]
+        }
+      }
+    },
+
+    "distractor": {
+      "_comment": "Distractor variables - no causal relation to outcome",
+      "variables": {
+        "barometric_pressure": {
+          "description": "Barometric pressure (hPa)",
+          "type": "float",
+          "range": [980, 1040],
+          "distribution": {"type": "gaussian", "mean": 1013, "std": 10},
+          "initially_visible": false,
+          "discovery_hints": ["pressure", "barometric", "atmospheric pressure"]
+        },
+        "uv_index": {
+          "description": "UV radiation index",
+          "type": "float",
+          "range": [0, 11],
+          "distribution": {"type": "weather_dependent", "sunny_mean": 7, "storm_mean": 1},
+          "initially_visible": false,
+          "discovery_hints": ["uv", "ultraviolet", "radiation"]
+        }
+      }
+    }
+  },
+
+  "discovery_difficulty": {
+    "easy": ["wind_speed", "humidity", "temperature", "hit_count", "status"],
+    "medium": ["def_remaining", "barometric_pressure", "uv_index"],
+    "hard": ["weather_state", "observation_noise"]
+  },
+
+  "natural_language_mappings": {
+    "weather": ["weather", "storm", "sunny", "clear", "rain"],
+    "noise": ["noise", "uncertainty", "error", "quality", "reliability"],
+    "measurement": ["measurement", "reading", "observation", "data"]
+  }
+}

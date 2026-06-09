@@ -1,0 +1,207 @@
+{
+  "_comment": "Deployment Zone Trap (Categorical) - Simpson's Paradox Bias Version",
+  "_design_note": "Historical data creates altitude paradox - mixed zone assignments make altitude appear irrelevant while hiding true EMI mechanism.",
+
+  "experiment": {
+    "name": "deployment_zone_trap_categorical_simpsons_paradox",
+    "display_name": "Deployment Zone Trap (Categorical) - Simpson's Paradox",
+    "description": "History creates statistical paradox around altitude. Aggregate data is confusing and hides the true causal mechanism.",
+    "version": "1.0",
+    "author": "CausalGame Team"
+  },
+
+  "resources": {
+    "total_drone_budget": 200,
+    "stage2_fleet_size": 1000,
+    "victory_threshold": 0.75,
+    "env_query_budget": 10,
+    "initial_observations": 50,
+    "initial_observation_bias": "deployment_zone_simpsons_paradox",
+    "stage1_deployment_budget": 10
+  },
+
+  "agent_visibility": {
+    "hide_failed_drones": true,
+    "_comment": "Agent cannot see DESTROYED/LOST drones - must infer from deploy count vs return count"
+  },
+
+  "scm": {
+    "exogenous_variables": {
+      "mission_zone": {
+        "distribution": "categorical",
+        "description": "Mission zone assignment (hidden confounder)"
+      }
+    },
+    "parameters": {
+      "emi_base_failure_rate": 1.5,
+      "emi_threshold": 0.10,
+      "shield_effectiveness": 0.015,
+      "max_shield_reduction": 0.85,
+      "comm_failure_loss_rate": 0.99,
+      "base_loss_rate": 0.02,
+      "altitude_wind_damage": {
+        "low": 0.01,
+        "medium": 0.01,
+        "high": 0.01
+      }
+    }
+  },
+
+  "agility_system": {
+    "base_agility": 1.0,
+    "linear_coefficient": 0.002,
+    "exponential_decay_scale": 200.0,
+    "min_agility": 0.1,
+    "max_agility": 1.0
+  },
+
+  "def_reduction_factor": 0.9,
+
+  "drone": {
+    "components": {
+      "engine": {
+        "hp": 100,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "cockpit": {
+        "hp": 100,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "wing": {
+        "hp": 80,
+        "default_def": 10,
+        "is_critical": true
+      },
+      "body": {
+        "hp": 80,
+        "default_def": 10,
+        "is_critical": true
+      },
+      "antenna": {
+        "hp": 50,
+        "default_def": 10,
+        "is_critical": false,
+        "_internal_note": "EMI damages antenna (hidden mechanism)"
+      },
+      "camera": {
+        "hp": 30,
+        "default_def": 5,
+        "is_critical": false
+      },
+      "gun": {
+        "hp": 40,
+        "default_def": 5,
+        "is_critical": false,
+        "has_atk": true,
+        "default_atk": 20
+      },
+      "shield": {
+        "hp": 30,
+        "default_def": 0,
+        "is_critical": false,
+        "_internal_note": "Shield protects against EMI - THE KEY TO VICTORY (hidden from agent)"
+      }
+    },
+    "standard_design": {
+      "engine_def": 15,
+      "cockpit_def": 15,
+      "wing_def": 10,
+      "body_def": 10,
+      "antenna_def": 10,
+      "camera_def": 5,
+      "gun_def": 5,
+      "shield_def": 0
+    },
+    "total_default_def": 70
+  },
+
+  "visibility": {
+    "fields": {
+      "hp": "hidden",
+      "agility": "hidden",
+      "detection_probability": "hidden",
+      "mission_zone": "hidden",
+      "emi_level": "hidden",
+      "comm_failure_prob": "hidden",
+      "def_values": "visible",
+      "hit_count": "visible",
+      "status": "visible",
+      "altitude_band": "visible",
+      "wind_resistance": "visible",
+      "signal_strength": "visible"
+    },
+    "agent_visible_override": ["def_values", "hit_count", "status", "altitude_band", "wind_resistance", "signal_strength", "temperature"],
+    "agent_hidden_override": ["hp", "agility", "detection_probability", "mission_zone", "emi_level", "comm_failure_prob", "effective_emi"]
+  },
+
+  "side_information": {
+    "_comment": "Hints for agent - designed to MISLEAD toward altitude trap",
+    "mission_briefing": [
+      "Configure DEF (armor) for each drone component.",
+      "Select ONE enhancement module to install on all drones.",
+      "Drones will traverse various deployment corridors at different altitudes.",
+      "Low-altitude zones are known to be extremely dangerous."
+    ],
+    "system_notes": [
+      "CRITICAL: Low-altitude flights show 3x higher loss rates than high-altitude.",
+      "Historical analysis confirms: altitude is the primary survival factor.",
+      "Choose enhancement modules based on mission requirements.",
+      "High-altitude corridors have proven to be the safest routes."
+    ],
+    "recommendations": [
+      "Prioritize engine_def for high-altitude flight capability.",
+      "Wing reinforcement is essential for high-altitude turbulence.",
+      "Consider thermal or aerodynamic enhancements for altitude operations.",
+      "Radar boost module recommended for threat detection."
+    ]
+  },
+
+  "trap_design": {
+    "_comment": "Internal documentation - NOT visible to agent",
+    "historical_parallel": "William Farr's altitude-cholera spurious correlation (1849)",
+    "primary_trap": {
+      "name": "Altitude-EMI Spurious Correlation + Categorical Trap",
+      "observed": "Low altitude flight correlates with high loss rate",
+      "hidden_truth": "Mission zone determines BOTH altitude AND EMI level. EMI causes losses, not altitude.",
+      "trap": "Agent may choose altitude-focused enhancements (thermal, aerodynamic, radar) AND invest in engine_def",
+      "optimal": "Invest in shield_def (25+) AND select signal_filter enhancement module"
+    },
+    "categorical_trap": {
+      "description": "5 enhancement modules, only 1 (signal_filter) provides critical EMI resistance",
+      "distractors": ["radar_boost", "thermal_shield", "power_core", "stealth_coating"],
+      "solution": "signal_filter (provides noise_reduction effect)"
+    }
+  },
+
+  "bias_config": {
+    "_comment": "Simpson's paradox bias - creates altitude paradox through forced zone assignments",
+    "bias_type": "deployment_zone_simpsons_paradox",
+    "paradox_design": {
+      "group_a": {
+        "description": "High altitude + High EMI (Epsilon zone)",
+        "design": {
+          "engine_def": 25,
+          "shield_def": 0
+        },
+        "equipment": "radar_boost",
+        "forced_zone": "epsilon",
+        "expected_survival": "~35-40%",
+        "insight": "High altitude but still dangerous - breaks 'altitude = safety' assumption"
+      },
+      "group_b": {
+        "description": "Low altitude + Low EMI (Delta zone)",
+        "design": {
+          "engine_def": 15,
+          "shield_def": 0
+        },
+        "equipment": "thermal_shield",
+        "forced_zone": "delta",
+        "expected_survival": "~85-90%",
+        "insight": "Low altitude but safe - breaks 'low altitude = danger' assumption"
+      }
+    },
+    "expected_effect": "Aggregate data shows altitude is not the cause (correct conclusion but wrong reason). Agent is confused about what actually matters. Multiple trap modules shown, making signal_filter harder to discover."
+  }
+}

@@ -1,0 +1,49 @@
+services:
+  # ── Game Backend (one per experiment) ──
+  game-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - CAUSALGAME_EXPERIMENT=${EXPERIMENT:-antenna_trap}
+      - CAUSALGAME_SERVE_STATIC=true
+    env_file: .env
+    volumes:
+      - ./agent_records:/app/agent_records
+    networks:
+      - canyon-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:80/api/admin/experiments')"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  # ── OpenCode Agent (one per model) ──
+  opencode-agent:
+    container_name: opencode-${OPENCODE_MODEL_SLUG:-agent}
+    build:
+      context: .
+      dockerfile: Dockerfile.opencode
+    environment:
+      - GAME_API=http://game-backend:80
+      - EXPERIMENT=${EXPERIMENT:-antenna_trap}
+      - OPENCODE_MODEL=${OPENCODE_MODEL:-anthropic/claude-sonnet-4-20250514}
+      - OPENCODE_STEPS=${OPENCODE_STEPS:-30}
+      - OPENCODE_DISABLE_AUTOUPDATE=true
+    env_file: .env
+    volumes:
+      - ./agent_records:/workspace/agent_records
+      - ./agent_workspaces:/opt/system/agent_workspaces
+    networks:
+      - canyon-net
+    depends_on:
+      game-backend:
+        condition: service_healthy
+    cap_add:
+      - NET_ADMIN
+    stdin_open: true
+    tty: true
+
+networks:
+  canyon-net:
+    driver: bridge

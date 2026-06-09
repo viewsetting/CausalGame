@@ -1,0 +1,306 @@
+{
+  "$schema": "1.0",
+  "_comment": "Action Space Configuration for Deployment Zone Shift Experiment",
+  "_design_note": "Agent observes altitude-survival correlation in Stage 1 but true cause is EMI. Shield_def is the key. Stage 2 shifts zone distribution to test causal understanding.",
+
+  "numerical": {
+    "engine_def": {
+      "min": 0,
+      "max": 50,
+      "default": 20,
+      "step": 1,
+      "description": "Engine armor plating. Critical for high-altitude flight capability and wind resistance."
+    },
+    "cockpit_def": {
+      "min": 0,
+      "max": 50,
+      "default": 20,
+      "step": 1,
+      "description": "Cockpit shielding. Critical component protection."
+    },
+    "wing_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Wing reinforcement. Essential for stability in high-altitude turbulent conditions."
+    },
+    "body_def": {
+      "min": 0,
+      "max": 50,
+      "default": 15,
+      "step": 1,
+      "description": "Main fuselage armor. Structural integrity."
+    },
+    "antenna_def": {
+      "min": 0,
+      "max": 50,
+      "default": 10,
+      "step": 1,
+      "description": "Antenna housing protection. Standard communication equipment."
+    },
+    "camera_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Camera system casing. Visual reconnaissance capability."
+    },
+    "gun_def": {
+      "min": 0,
+      "max": 50,
+      "default": 5,
+      "step": 1,
+      "description": "Weapon system armor. Offensive capability protection."
+    },
+    "shield_def": {
+      "min": 0,
+      "max": 50,
+      "default": 0,
+      "step": 1,
+      "description": "Electromagnetic shielding module. Provides protection against environmental interference."
+    }
+  },
+
+  "discrete": {
+    "flight_profile": {
+      "type": "single_choice",
+      "description": "Preferred flight altitude profile for the mission.",
+      "options": {
+        "low": {
+          "name": "Low Altitude",
+          "description": "Terrain-following flight. Certain zones at this altitude show high loss rates in Stage 1 data.",
+          "cost": 0
+        },
+        "medium": {
+          "name": "Medium Altitude",
+          "description": "Balanced flight profile. Moderate environmental conditions.",
+          "cost": 0
+        },
+        "high": {
+          "name": "High Altitude",
+          "description": "High-altitude cruise. Stage 1 data shows better survival, but conditions may change in Stage 2.",
+          "cost": 0
+        }
+      },
+      "default": "medium",
+      "_trap_note": "Agent may prefer high/low altitude based on Stage 1 correlation - THIS IS THE TRAP"
+    },
+    "comm_protocol": {
+      "type": "single_choice",
+      "description": "Communication protocol for mission coordination.",
+      "options": {
+        "standard": {
+          "name": "Standard Protocol",
+          "description": "Regular communication frequency. Reliable in most conditions.",
+          "cost": 0
+        },
+        "extended_range": {
+          "name": "Extended Range",
+          "description": "Long-range communication for extended operations.",
+          "cost": 2
+        },
+        "hardened": {
+          "name": "Hardened Protocol",
+          "description": "Shielded communication systems. May provide interference resistance.",
+          "cost": 3
+        }
+      },
+      "default": "standard",
+      "_hint_note": "hardened protocol provides some EMI resistance but shield_def is more important"
+    },
+    "power_mode": {
+      "type": "single_choice",
+      "description": "Power distribution mode for onboard systems.",
+      "options": {
+        "balanced": {
+          "name": "Balanced Mode",
+          "description": "Equal power distribution across all systems.",
+          "cost": 0
+        },
+        "propulsion": {
+          "name": "Propulsion Priority",
+          "description": "Maximize engine power for altitude climbing and wind resistance.",
+          "cost": 0
+        },
+        "electronics": {
+          "name": "Electronics Priority",
+          "description": "Allocate extra power to shielding and communication systems.",
+          "cost": 0
+        }
+      },
+      "default": "balanced",
+      "_hint_note": "electronics mode provides slight EMI benefit but shield_def is key"
+    },
+    "signal_filter": {
+      "type": "single_choice",
+      "description": "Signal filtering configuration for interference reduction.",
+      "options": {
+        "standard": {
+          "name": "Standard Filter",
+          "description": "Default signal filtering. Suitable for normal conditions.",
+          "cost": 0
+        },
+        "aggressive": {
+          "name": "Aggressive Filtering",
+          "description": "Maximum interference filtering. May reduce communication range.",
+          "cost": 2
+        },
+        "adaptive": {
+          "name": "Adaptive Filter",
+          "description": "Automatically adjusts filtering based on conditions.",
+          "cost": 3
+        }
+      },
+      "default": "standard",
+      "_hint_note": "All filters provide some EMI resistance, but shield_def is primary defense"
+    },
+    "hull_coating": {
+      "type": "single_choice",
+      "description": "External hull treatment for environmental protection.",
+      "options": {
+        "standard": {
+          "name": "Standard Coating",
+          "description": "Factory default hull finish.",
+          "cost": 0
+        },
+        "thermal": {
+          "name": "Thermal Resistant",
+          "description": "Heat-resistant coating for temperature extremes.",
+          "cost": 3
+        },
+        "shielded": {
+          "name": "EMI Shielded",
+          "description": "Conductive coating for electromagnetic protection.",
+          "cost": 4
+        }
+      },
+      "default": "standard",
+      "_hint_note": "shielded coating provides EMI resistance, synergizes with shield_def"
+    }
+  },
+
+  "boolean": {
+    "turbo_climb": {
+      "description": "Enable turbo climb mode for rapid altitude gain. Helps reach high-altitude corridors quickly.",
+      "default": false,
+      "_trap_note": "Sounds critical for altitude strategy but has no effect on survival"
+    },
+    "wind_deflectors": {
+      "description": "Deploy retractable wind deflectors for improved high-altitude stability.",
+      "default": false,
+      "_trap_note": "Sounds useful for altitude but has no effect on EMI protection"
+    },
+    "reinforced_shielding": {
+      "description": "Install supplemental electromagnetic shielding reinforcement. Provides additional EMI resistance.",
+      "default": false,
+      "_hint_note": "Actually provides EMI resistance - synergizes with shield_def"
+    }
+  },
+
+  "constraints": {
+    "total_def_budget": 90,
+    "_comment": "Total DEF points cannot exceed this budget (includes shield_def)"
+  },
+
+  "_effects": {
+    "_comment": "HIDDEN FROM AGENT - Maps choices to actual effects",
+
+    "_zone_assignment": {
+      "_note": "flight_profile provides a hint but doesn't directly control zone - zone is sampled by SCM",
+      "low": "Agent may prefer low altitude, but gamma zone (low+high-EMI) is dangerous",
+      "high": "Agent may prefer high altitude, but epsilon zone (high+high-EMI) is also dangerous",
+      "medium": "Balanced choice"
+    },
+
+    "_emi_resistance_effects": {
+      "shield_def": {
+        "_formula": "emi_reduction = min(shield_def * 0.025, 0.80)",
+        "_examples": {
+          "shield_def=0": "0% EMI reduction",
+          "shield_def=10": "25% EMI reduction",
+          "shield_def=20": "50% EMI reduction",
+          "shield_def=30": "75% EMI reduction",
+          "shield_def=40": "80% EMI reduction (max)"
+        },
+        "_note": "THE KEY - shield_def is the primary defense against EMI"
+      },
+
+      "standard_protocol": { "emi_resistance": 0.0 },
+      "extended_range": { "emi_resistance": 0.0 },
+      "hardened_protocol": { "emi_resistance": 0.10 },
+
+      "balanced_mode": { "emi_resistance": 0.0 },
+      "propulsion_mode": { "emi_resistance": -0.05, "_note": "Less power for shielding - actually hurts" },
+      "electronics_mode": { "emi_resistance": 0.05 },
+
+      "standard_filter": { "emi_resistance": 0.0 },
+      "aggressive_filter": { "emi_resistance": 0.15 },
+      "adaptive_filter": { "emi_resistance": 0.20 },
+
+      "standard_coating": { "emi_resistance": 0.0 },
+      "thermal_coating": { "emi_resistance": 0.0, "_note": "TRAP - sounds useful but no effect" },
+      "shielded_coating": { "emi_resistance": 0.10 },
+
+      "turbo_climb": { "emi_resistance": 0.0, "_note": "TRAP" },
+      "wind_deflectors": { "emi_resistance": 0.0, "_note": "TRAP" },
+      "reinforced_shielding": { "emi_resistance": 0.15, "_note": "Actually helps" }
+    },
+
+    "_total_emi_formula": {
+      "_formula": "total_emi_reduction = min(shield_reduction + equipment_reduction, 0.95)",
+      "_examples": [
+        "shield_def=0, no equipment: 0% → FAIL",
+        "shield_def=20, no equipment: 50% → MARGINAL",
+        "shield_def=30, no equipment: 75% → GOOD",
+        "shield_def=30, shielded_coating: 85% → VERY GOOD",
+        "shield_def=35, adaptive_filter, shielded_coating, reinforced: min(87.5%+45%, 95%) = 95% → OPTIMAL"
+      ]
+    },
+
+    "_stage_distribution": {
+      "stage1": {
+        "alpha": 0.20, "beta": 0.20, "gamma": 0.20, "delta": 0.20, "epsilon": 0.20,
+        "_note": "Balanced - agent may observe patterns and overfit"
+      },
+      "stage2": {
+        "alpha": 0.10, "beta": 0.15, "gamma": 0.35, "delta": 0.10, "epsilon": 0.30,
+        "_note": "High-risk zones (gamma/epsilon) increase - tests if agent discovered true cause"
+      }
+    },
+
+    "_optimal_strategies": {
+      "minimal_causal": {
+        "shield_def": 30,
+        "expected_stage1": "70-75%",
+        "expected_stage2": "70-75%",
+        "_note": "Discovers true cause - consistent performance across stages"
+      },
+      "overfit_altitude": {
+        "shield_def": 0,
+        "engine_def": 35,
+        "wing_def": 30,
+        "expected_stage1": "50-55%",
+        "expected_stage2": "35-45%",
+        "_note": "Overfits to altitude correlation from Stage 1 - fails when epsilon zone increases"
+      },
+      "balanced_optimal": {
+        "shield_def": 30,
+        "signal_filter": "adaptive",
+        "hull_coating": "shielded",
+        "reinforced_shielding": true,
+        "expected_stage1": "75-80%",
+        "expected_stage2": "75-80%",
+        "_note": "Optimal combination - best performance across both stages"
+      }
+    },
+
+    "_performance_prediction": {
+      "no_shield": "30-40% in Stage 1, 25-35% in Stage 2 (FAIL)",
+      "low_shield_10": "50-60% in Stage 1, 45-55% in Stage 2 (MARGINAL)",
+      "medium_shield_25": "65-75% in Stage 1, 65-75% in Stage 2 (GOOD)",
+      "high_shield_35": "70-80% in Stage 1, 70-80% in Stage 2 (WIN)",
+      "_note": "Shield_def is the key - equipment provides minor bonuses but shield_def is primary"
+    }
+  }
+}

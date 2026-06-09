@@ -1,0 +1,41 @@
+{
+  "_comment": "Server and Network Configuration - Modify this file for deployment settings",
+  "timezone": {
+    "_comment": "Timezone config - can be overridden via TIMEZONE env variable in .env",
+    "default": "UTC",
+    "format": {
+      "datetime": "%Y-%m-%d %H:%M:%S",
+      "time_only": "%H:%M:%S",
+      "date_only": "%Y-%m-%d"
+    }
+  },
+  "backend": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "docker_internal_port": 80,
+    "cors_origins": [
+      "*"
+    ],
+    "timeout_seconds": 60
+  },
+  "api": {
+    "base_url": "http://localhost:8000",
+    "endpoints": {
+      "mission_status": "/api/mission_status",
+      "mission_data": "/api/mission_data",
+      "deploy_drone": "/api/deploy_drone",
+      "evaluate_final": "/api/evaluate_final_design",
+      "reset": "/api/reset",
+      "agent_log": "/api/agent/log",
+      "agent_logs": "/api/agent/logs",
+      "session_history": "/api/session_history",
+      "environment": "/api/environment",
+      "environments": "/api/environments"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "output": "console"
+  }
+}

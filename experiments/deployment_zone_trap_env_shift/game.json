@@ -1,0 +1,231 @@
+{
+  "_comment": "Deployment Zone Shift - Game Configuration with Environment Shift between Stages",
+  "_design_note": "Based on deployment_zone_trap but adds Stage 1 → Stage 2 environment shift. Stage 1: balanced zones. Stage 2: high-risk zones more common. Tests if agent discovered TRUE causal mechanism (shield_def → EMI resistance) vs overfitted to Stage 1 correlations.",
+
+  "experiment": {
+    "name": "deployment_zone_trap_env_shift",
+    "display_name": "Deployment Zone Shift",
+    "description": "Environment shift challenge: Zone distribution changes from Stage 1 to Stage 2. Agent must discover shield_def → EMI resistance (causal) rather than overfit to altitude correlations from Stage 1.",
+    "version": "1.0",
+    "author": "CausalGame Team"
+  },
+
+  "resources": {
+    "total_drone_budget": 200,
+    "stage2_fleet_size": 1000,
+    "victory_threshold": 0.70,
+    "env_query_budget": 10,
+    "initial_observations": 50,
+    "stage1_deployment_budget": 10
+  },
+
+  "agent_visibility": {
+    "hide_failed_drones": true,
+    "_comment": "Agent cannot see DESTROYED/LOST drones - must infer from deploy count vs return count"
+  },
+
+  "scm": {
+    "exogenous_variables": {
+      "mission_zone": {
+        "distribution": "categorical",
+        "description": "Mission zone assignment (hidden confounder) - distribution shifts DRAMATICALLY between stages"
+      }
+    },
+    "parameters": {
+      "emi_base_failure_rate": 2.0,
+      "emi_threshold": 0.1,
+      "shield_effectiveness": 0.025,
+      "max_shield_reduction": 0.8,
+      "comm_failure_loss_rate": 0.85,
+      "base_loss_rate": 0.12,
+      "altitude_wind_damage": {
+        "low": 0.05,
+        "medium": 0.10,
+        "high": 0.15
+      }
+    },
+    "_stage_distribution": {
+      "stage1_gentle": {
+        "alpha": 0.50,
+        "beta": 0.20,
+        "gamma": 0.30,
+        "delta": 0.00,
+        "epsilon": 0.00,
+        "_note": "Stage 1: Only low-medium EMI zones (0.1-0.3). No high-EMI zones appear."
+      },
+      "stage2_extreme": {
+        "alpha": 0.00,
+        "beta": 0.00,
+        "gamma": 0.00,
+        "delta": 0.50,
+        "epsilon": 0.50,
+        "_note": "Stage 2: ONLY high-EMI zones (0.8). Complete environment shift - tests if shield_def works in extreme conditions."
+      }
+    }
+  },
+
+  "agility_system": {
+    "base_agility": 1.0,
+    "linear_coefficient": 0.002,
+    "exponential_decay_scale": 200.0,
+    "min_agility": 0.1,
+    "max_agility": 1.0
+  },
+
+  "def_reduction_factor": 0.9,
+
+  "drone": {
+    "components": {
+      "engine": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "cockpit": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "wing": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "body": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "antenna": {
+        "hp": 50,
+        "default_def": 10,
+        "is_critical": false,
+        "_internal_note": "EMI damages antenna (hidden mechanism)"
+      },
+      "camera": {
+        "hp": 30,
+        "default_def": 5,
+        "is_critical": false
+      },
+      "gun": {
+        "hp": 40,
+        "default_def": 5,
+        "is_critical": false,
+        "has_atk": true,
+        "default_atk": 20
+      },
+      "shield": {
+        "hp": 30,
+        "default_def": 0,
+        "is_critical": false,
+        "_internal_note": "Shield protects against EMI - THE KEY TO VICTORY (hidden from agent)"
+      }
+    },
+    "standard_design": {
+      "engine_def": 20,
+      "cockpit_def": 20,
+      "wing_def": 15,
+      "body_def": 15,
+      "antenna_def": 10,
+      "camera_def": 5,
+      "gun_def": 5,
+      "shield_def": 0
+    },
+    "total_default_def": 90
+  },
+
+  "visibility": {
+    "fields": {
+      "hp": "hidden",
+      "agility": "hidden",
+      "detection_probability": "hidden",
+      "mission_zone": "hidden",
+      "emi_level": "hidden",
+      "comm_failure_prob": "hidden",
+      "def_values": "visible",
+      "hit_count": "visible",
+      "status": "visible",
+      "altitude_band": "visible",
+      "wind_resistance": "visible",
+      "signal_strength": "visible",
+      "temperature": "visible",
+      "stage": "hidden"
+    },
+    "agent_visible_override": ["def_values", "hit_count", "status", "altitude_band", "wind_resistance", "signal_strength", "temperature"],
+    "agent_hidden_override": ["hp", "agility", "detection_probability", "mission_zone", "emi_level", "comm_failure_prob", "effective_emi", "stage"]
+  },
+
+  "side_information": {
+    "_comment": "Hints for agent - hints are honest but don't explicitly reveal the stage shift",
+    "mission_briefing": [
+      "Configure DEF (armor) for each drone component.",
+      "Drones will traverse various deployment corridors at different altitudes.",
+      "Mission zones have varying environmental conditions.",
+      "Some zones are more dangerous than others.",
+      "Discover the TRUE causal mechanism to survive in Stage 2 validation."
+    ],
+    "system_notes": [
+      "Historical data shows varied loss rates across different zones.",
+      "Altitude bands are visible: low, medium, high.",
+      "Certain zones have extreme electromagnetic interference (EMI).",
+      "EMI can cause communication failures leading to crashes.",
+      "Shield components may provide protection against environmental hazards."
+    ],
+    "recommendations": [
+      "Analyze loss patterns across different environmental conditions.",
+      "Test designs in diverse zones to understand causal mechanisms.",
+      "Discover which component attributes actually affect survival.",
+      "Beware of spurious correlations - test interventions, not observations."
+    ]
+  },
+
+  "trap_design": {
+    "_comment": "Internal documentation - NOT visible to agent",
+    "historical_parallel": "William Farr's altitude-cholera spurious correlation (1849) + Environment Shift Challenge",
+    "primary_trap": {
+      "name": "Zone Distribution Shift + Altitude-EMI Spurious Correlation",
+      "stage1_observed": "Balanced zone distribution - agent may learn 'avoid low altitude' from gamma zone data",
+      "stage2_shift": "High-risk zones (gamma/epsilon) increase from 20%/20% → 35%/30%",
+      "hidden_truth": "Mission zone determines BOTH altitude AND EMI level. EMI causes losses, not altitude.",
+      "overfit_trap": "Agent may overfit to Stage 1 pattern 'avoid low altitude' but fails when epsilon (high+EMI) increases in Stage 2",
+      "optimal": "Invest in shield_def to resist EMI - works in ALL zones, regardless of distribution"
+    },
+    "causal_structure": {
+      "true_cause": "mission_zone -> emi_level -> comm_failure -> loss",
+      "spurious_correlation": "mission_zone -> altitude_band (correlated with emi but NOT causal)",
+      "stage_shift_mechanism": "Stage 2 increases P(gamma) and P(epsilon), testing if agent learned causal mechanism"
+    },
+    "counter_examples": {
+      "delta_zone": "Low altitude BUT low EMI - proves altitude isn't the cause",
+      "epsilon_zone": "High altitude BUT high EMI - proves altitude isn't protective (becomes common in Stage 2!)"
+    }
+  },
+
+  "expected_performance": {
+    "_comment": "Expected outcomes for different strategies with environment shift",
+    "standard_design": {
+      "description": "Default design (shield_def=0)",
+      "stage1_expected": "40-50%",
+      "stage2_expected": "30-40%",
+      "verdict": "FAIL - no EMI protection, fails in both stages"
+    },
+    "altitude_overfit": {
+      "description": "High engine_def for altitude (engine_def=35, wing_def=30, shield_def=0)",
+      "stage1_expected": "45-55%",
+      "stage2_expected": "35-45%",
+      "verdict": "FAIL - overfits to 'avoid low altitude' but epsilon (high+EMI) increases in Stage 2"
+    },
+    "partial_shield": {
+      "description": "Medium shield_def (shield_def=10-15)",
+      "stage1_expected": "55-65%",
+      "stage2_expected": "50-60%",
+      "verdict": "MARGINAL - some EMI protection but not enough for Stage 2's high-risk zones"
+    },
+    "optimal_strategy": {
+      "description": "High shield_def (shield_def=25-35) with balanced other components",
+      "stage1_expected": "70-80%",
+      "stage2_expected": "70-80%",
+      "verdict": "WIN - discovered true causal mechanism, performs consistently across stages"
+    }
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "_comment": "Deployment Zone Trap (Categorical, No Selection Bias) - Game Configuration",
+  "_design_note": "Based on deployment_zone_trap_categorical but with hide_failed_drones=false. Agent can see ALL drones including destroyed ones.",
+
+  "experiment": {
+    "name": "deployment_zone_trap_categorical_no_selection_bias",
+    "display_name": "Deployment Zone Trap (Categorical, No Selection Bias)",
+    "description": "Same as deployment_zone_trap_categorical but agent can see ALL drones including destroyed ones. No survivorship bias in observations.",
+    "version": "1.0",
+    "author": "CausalGame Team"
+  },
+
+  "resources": {
+    "total_drone_budget": 200,
+    "stage2_fleet_size": 1000,
+    "victory_threshold": 0.75,
+    "env_query_budget": 10,
+    "initial_observations": 50,
+    "stage1_deployment_budget": 10
+  },
+
+  "agent_visibility": {
+    "hide_failed_drones": false,
+    "_comment": "No selection bias - agent can see ALL drones including DESTROYED/LOST ones"
+  },
+
+  "scm": {
+    "exogenous_variables": {
+      "mission_zone": {
+        "distribution": "categorical",
+        "description": "Mission zone assignment (hidden confounder)"
+      }
+    },
+    "parameters": {
+      "emi_base_failure_rate": 1.5,
+      "emi_threshold": 0.10,
+      "shield_effectiveness": 0.015,
+      "max_shield_reduction": 0.85,
+      "comm_failure_loss_rate": 0.99,
+      "base_loss_rate": 0.02,
+      "altitude_wind_damage": {
+        "low": 0.01,
+        "medium": 0.01,
+        "high": 0.01
+      }
+    }
+  },
+
+  "agility_system": {
+    "base_agility": 1.0,
+    "linear_coefficient": 0.002,
+    "exponential_decay_scale": 200.0,
+    "min_agility": 0.1,
+    "max_agility": 1.0
+  },
+
+  "def_reduction_factor": 0.9,
+
+  "drone": {
+    "components": {
+      "engine": {
+        "hp": 100,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "cockpit": {
+        "hp": 100,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "wing": {
+        "hp": 80,
+        "default_def": 10,
+        "is_critical": true
+      },
+      "body": {
+        "hp": 80,
+        "default_def": 10,
+        "is_critical": true
+      },
+      "antenna": {
+        "hp": 50,
+        "default_def": 10,
+        "is_critical": false,
+        "_internal_note": "EMI damages antenna (hidden mechanism)"
+      },
+      "camera": {
+        "hp": 30,
+        "default_def": 5,
+        "is_critical": false
+      },
+      "gun": {
+        "hp": 40,
+        "default_def": 5,
+        "is_critical": false,
+        "has_atk": true,
+        "default_atk": 20
+      },
+      "shield": {
+        "hp": 30,
+        "default_def": 0,
+        "is_critical": false,
+        "_internal_note": "Shield protects against EMI - THE KEY TO VICTORY (hidden from agent)"
+      }
+    },
+    "standard_design": {
+      "engine_def": 15,
+      "cockpit_def": 15,
+      "wing_def": 10,
+      "body_def": 10,
+      "antenna_def": 10,
+      "camera_def": 5,
+      "gun_def": 5,
+      "shield_def": 0
+    },
+    "total_default_def": 70
+  },
+
+  "visibility": {
+    "fields": {
+      "hp": "hidden",
+      "agility": "hidden",
+      "detection_probability": "hidden",
+      "mission_zone": "hidden",
+      "emi_level": "hidden",
+      "comm_failure_prob": "hidden",
+      "def_values": "visible",
+      "hit_count": "visible",
+      "status": "visible",
+      "altitude_band": "visible",
+      "wind_resistance": "visible",
+      "signal_strength": "visible"
+    },
+    "agent_visible_override": ["def_values", "hit_count", "status", "altitude_band", "wind_resistance", "signal_strength", "temperature"],
+    "agent_hidden_override": ["hp", "agility", "detection_probability", "mission_zone", "emi_level", "comm_failure_prob", "effective_emi"]
+  },
+
+  "side_information": {
+    "_comment": "Hints for agent - designed to MISLEAD toward altitude trap",
+    "mission_briefing": [
+      "Configure DEF (armor) for each drone component.",
+      "Select ONE enhancement module to install on all drones.",
+      "Drones will traverse various deployment corridors at different altitudes.",
+      "Low-altitude zones are known to be extremely dangerous."
+    ],
+    "system_notes": [
+      "CRITICAL: Low-altitude flights show 3x higher loss rates than high-altitude.",
+      "Historical analysis confirms: altitude is the primary survival factor.",
+      "Choose enhancement modules based on mission requirements.",
+      "High-altitude corridors have proven to be the safest routes."
+    ],
+    "recommendations": [
+      "Prioritize engine_def for high-altitude flight capability.",
+      "Wing reinforcement is essential for high-altitude turbulence.",
+      "Consider thermal or aerodynamic enhancements for altitude operations.",
+      "Radar boost module recommended for threat detection."
+    ]
+  },
+
+  "trap_design": {
+    "_comment": "Internal documentation - NOT visible to agent",
+    "historical_parallel": "William Farr's altitude-cholera spurious correlation (1849)",
+    "primary_trap": {
+      "name": "Altitude-EMI Spurious Correlation + Categorical Trap",
+      "observed": "Low altitude flight correlates with high loss rate",
+      "hidden_truth": "Mission zone determines BOTH altitude AND EMI level. EMI causes losses, not altitude.",
+      "trap": "Agent may choose altitude-focused enhancements (thermal, aerodynamic, radar) AND invest in engine_def",
+      "optimal": "Invest in shield_def (25+) AND select signal_filter enhancement module"
+    },
+    "categorical_trap": {
+      "description": "5 enhancement modules, only 1 (signal_filter) provides critical EMI resistance",
+      "distractors": ["radar_boost", "thermal_shield", "power_core", "stealth_coating"],
+      "solution": "signal_filter (provides noise_reduction effect)"
+    }
+  },
+
+  "expected_performance": {
+    "_comment": "Expected outcomes for different strategies (tested with 1000 drones each, gap ~29%)",
+    "standard_design_wrong_module": {
+      "description": "Default design + any non-signal_filter module (e.g., radar_boost)",
+      "expected_survival": "50-55%",
+      "emi_reduction": "0%",
+      "verdict": "FAIL - no EMI protection, high loss rate"
+    },
+    "good_shield_wrong_module": {
+      "description": "High shield_def (25+) but wrong enhancement module",
+      "expected_survival": "58-63%",
+      "emi_reduction": "25 * 0.015 = 37.5%",
+      "verdict": "FAIL - shield helps but categorical choice is critical"
+    },
+    "signal_filter_low_shield": {
+      "description": "Signal filter module but standard shield_def (0)",
+      "expected_survival": "65-70%",
+      "emi_reduction": "55%",
+      "verdict": "FAIL (borderline) - signal_filter is key but shield boosts further"
+    },
+    "optimal_strategy": {
+      "description": "High shield_def (25+) AND signal_filter module",
+      "expected_survival": "78-83%",
+      "emi_reduction": "min(55% + 37.5%, 85%) = 85%",
+      "verdict": "WIN - discovered both causal factors (categorical + numerical)"
+    }
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "_comment": "Agent Configuration - Modify this file for AI research settings",
+  "models": {
+    "default": "gpt-5-mini",
+    "available": {
+      "gpt-5.5": {
+        "provider": "openai",
+        "model_id": "gpt-5.5",
+        "description": "OpenAI GPT-5.5",
+        "context_window": 1000000,
+        "recommended_for": "strongest reasoning capability"
+      },
+      "gpt-5.5-high": {
+        "provider": "openai",
+        "model_id": "gpt-5.5",
+        "description": "OpenAI GPT-5.5 with high reasoning effort",
+        "context_window": 1000000,
+        "reasoning_effort": "high",
+        "recommended_for": "complex reasoning tasks"
+      },
+      "gpt-5.5-xhigh": {
+        "provider": "openai",
+        "model_id": "gpt-5.5",
+        "description": "OpenAI GPT-5.5 with xhigh reasoning effort",
+        "context_window": 1000000,
+        "reasoning_effort": "xhigh",
+        "recommended_for": "most complex reasoning tasks"
+      },
+      "gpt-5.2": {
+        "provider": "openai",
+        "description": "OpenAI GPT-5.2",
+        "context_window": 200000,
+        "recommended_for": "strongest reasoning capability"
+      },
+      "gpt-5.2-high": {
+        "provider": "openai",
+        "model_id": "gpt-5.2",
+        "description": "OpenAI GPT-5.2 with high reasoning effort",
+        "context_window": 200000,
+        "reasoning_effort": "high",
+        "recommended_for": "complex reasoning tasks requiring deep thinking"
+      },
+      "gpt-5-mini": {
+        "provider": "openai",
+        "description": "OpenAI GPT-5 Mini - lightweight fast version",
+        "context_window": 128000,
+        "recommended_for": "quick testing and daily tasks"
+      },
+      "gpt-oss-120b": {
+        "provider": "openrouter",
+        "model_id": "openai/gpt-oss-120b",
+        "description": "GPT-OSS 120B via OpenRouter - open-source model",
+        "context_window": 128000,
+        "recommended_for": "open-source model testing and research"
+      },
+      "claude-opus-4-5": {
+        "provider": "anthropic",
+        "model_id": "claude-opus-4-5",
+        "description": "Claude Opus 4.5 via AIMLAPI - most powerful Claude model",
+        "context_window": 200000,
+        "recommended_for": "complex reasoning and deep analysis"
+      },
+      "claude-opus-4.7": {
+        "provider": "openrouter",
+        "model_id": "anthropic/claude-opus-4.7",
+        "description": "Claude Opus 4.7 via OpenRouter (released 2026-04-16) - 1M context",
+        "context_window": 1000000,
+        "recommended_for": "most complex reasoning tasks"
+      },
+      "claude-sonnet-4-5": {
+        "provider": "anthropic",
+        "model_id": "claude-sonnet-4-5",
+        "description": "Claude Sonnet 4.5 via AIMLAPI - balanced performance and cost",
+        "context_window": 200000,
+        "recommended_for": "daily tasks"
+      },
+      "gemini-3.5-flash": {
+        "provider": "openrouter",
+        "model_id": "google/gemini-3.5-flash",
+        "description": "Gemini 3.5 Flash via OpenRouter (released 2026-05-19)",
+        "context_window": 1048576,
+        "recommended_for": "fast testing"
+      },
+      "gemini-3.1-flash-lite-preview": {
+        "provider": "openrouter",
+        "model_id": "google/gemini-3.1-flash-lite-preview",
+        "description": "Gemini 3.1 Flash Lite Preview via OpenRouter (released 2026-03-03)",
+        "context_window": 1048576,
+        "recommended_for": "fast testing"
+      },
+      "grok-4-1-fast-reasoning": {
+        "provider": "xai",
+        "model_id": "grok-4-1-fast-reasoning",
+        "description": "xAI Grok 4.1 Fast - fast reasoning model",
+        "context_window": 131072,
+        "recommended_for": "fast reasoning and code generation"
+      },
+      "grok-4.20": {
+        "provider": "openrouter",
+        "model_id": "x-ai/grok-4.20",
+        "description": "xAI Grok 4.20 via OpenRouter (released 2026-03-31)",
+        "context_window": 2000000,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "deepseek-v3.2": {
+        "provider": "openrouter",
+        "model_id": "deepseek/deepseek-v3.2",
+        "description": "DeepSeek V3.2 via OpenRouter",
+        "context_window": 128000,
+        "recommended_for": "general reasoning tasks"
+      },
+      "deepseek-v3.2-thinking": {
+        "provider": "openrouter",
+        "model_id": "deepseek/deepseek-v3.2",
+        "description": "DeepSeek V3.2 with thinking mode enabled",
+        "context_window": 128000,
+        "enable_thinking": true,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "deepseek-v4-flash": {
+        "provider": "openai",
+        "model_id": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com",
+        "description": "DeepSeek V4 Flash via DeepSeek API",
+        "context_window": 1048576,
+        "recommended_for": "fast reasoning tasks"
+      },
+      "deepseek-v4-pro": {
+        "provider": "openai",
+        "model_id": "deepseek-v4-pro",
+        "base_url": "https://api.deepseek.com",
+        "description": "DeepSeek V4 Pro via DeepSeek API (released 2026-04-24)",
+        "context_window": 1048576,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "glm-4.7": {
+        "provider": "openrouter",
+        "model_id": "z-ai/glm-4.7",
+        "description": "GLM-4.7 via AIMLAPI - Zhipu AI model",
+        "context_window": 200000,
+        "recommended_for": "Chinese reasoning tasks"
+      },
+      "glm-5.1": {
+        "provider": "openrouter",
+        "model_id": "z-ai/glm-5.1",
+        "description": "GLM 5.1 via OpenRouter - Z.ai (released 2026-04-07)",
+        "context_window": 202752,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "kimi-k2.5": {
+        "provider": "openrouter",
+        "model_id": "moonshotai/kimi-k2.5",
+        "description": "Kimi K2.5 via OpenRouter - Moonshot AI model",
+        "context_window": 128000,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "kimi-k2.6": {
+        "provider": "openrouter",
+        "model_id": "moonshotai/kimi-k2.6",
+        "description": "Kimi K2.6 via OpenRouter - Moonshot AI model (released 2026-04-20)",
+        "context_window": 256000,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "minimax-m2": {
+        "provider": "openrouter",
+        "model_id": "minimax/minimax-m2",
+        "description": "MiniMax M2 via OpenRouter",
+        "context_window": 200000,
+        "recommended_for": "general reasoning tasks"
+      },
+      "minimax-m2-1": {
+        "provider": "openrouter",
+        "model_id": "minimax/minimax-m2.1",
+        "description": "MiniMax M2 via AIMLAPI",
+        "context_window": 200000,
+        "recommended_for": "general reasoning tasks"
+      },
+      "minimax-m2-7": {
+        "provider": "openrouter",
+        "model_id": "minimax/minimax-m2.7",
+        "description": "MiniMax M2.7 via OpenRouter",
+        "context_window": 196608,
+        "recommended_for": "general reasoning tasks"
+      },
+      "mimo-v2-flash": {
+        "provider": "openrouter",
+        "model_id": "xiaomi/mimo-v2-flash",
+        "description": "Xiaomi MiMo V2 Flash via OpenRouter",
+        "context_window": 262144,
+        "recommended_for": "fast reasoning tasks"
+      },
+      "mimo-v2.5-pro": {
+        "provider": "openrouter",
+        "model_id": "xiaomi/mimo-v2.5-pro",
+        "description": "Xiaomi MiMo V2.5 Pro via OpenRouter (released 2026-04-22)",
+        "context_window": 1048576,
+        "recommended_for": "complex reasoning tasks"
+      },
+      "hy3-preview": {
+        "provider": "openrouter",
+        "model_id": "tencent/hy3-preview",
+        "description": "Tencent HY3 Preview via OpenRouter - free tier",
+        "context_window": 128000,
+        "recommended_for": "general reasoning tasks"
+      },
+      "qwen3.7-max": {
+        "provider": "openrouter",
+        "model_id": "qwen/qwen3.7-max",
+        "description": "Qwen 3.7 Max via OpenRouter - Alibaba Qwen",
+        "context_window": 1000000,
+        "recommended_for": "complex reasoning tasks"
+      }
+    }
+  },
+  "execution": {
+    "max_turns": 50,
+    "max_tool_iterations_per_turn": 5,
+    "timeout_per_turn_seconds": 120,
+    "total_timeout_seconds": 3600,
+    "auto_reset_on_start": true,
+    "enable_self_reflection": true
+  },
+  "code_execution": {
+    "allowed_libraries": [
+      "pandas",
+      "numpy",
+      "requests",
+      "json",
+      "time"
+    ],
+    "max_execution_time_seconds": 10,
+    "enable_retry_on_error": true,
+    "max_retries": 3
+  },
+  "system_instruction": {
+    "template": "default",
+    "templates": {
+      "default": {
+        "include_causal_hints": false,
+        "include_budget_tips": true,
+        "include_environment_tips": true,
+        "verbosity": "detailed"
+      },
+      "causal_aware": {
+        "include_causal_hints": true,
+        "include_budget_tips": true,
+        "include_environment_tips": true,
+        "verbosity": "detailed",
+        "hints": [
+          "Consider selection bias: are you only seeing survivors?",
+          "Correlation does not imply causation",
+          "Think about hidden confounders"
+        ]
+      },
+      "minimal": {
+        "include_causal_hints": false,
+        "include_budget_tips": false,
+        "include_environment_tips": false,
+        "verbosity": "minimal"
+      }
+    }
+  },
+  "strategies": {
+    "_comment": "Predefined agent strategy configurations",
+    "exploratory": {
+      "description": "Heavy exploration, minimal exploitation",
+      "exploration_drones": 40,
+      "min_experiments_before_submit": 10,
+      "randomize_designs": true
+    },
+    "conservative": {
+      "description": "Quickly find viable solution and submit",
+      "exploration_drones": 20,
+      "min_experiments_before_submit": 3,
+      "randomize_designs": false
+    },
+    "analytical": {
+      "description": "Deep data analysis before experimentation",
+      "exploration_drones": 30,
+      "min_experiments_before_submit": 5,
+      "require_correlation_analysis": true,
+      "require_environment_analysis": true
+    }
+  },
+  "logging": {
+    "log_to_server": true,
+    "log_level": "INFO",
+    "save_conversation": true,
+    "conversation_dir": "./logs/conversations",
+    "save_code_executions": true,
+    "code_execution_dir": "./logs/code"
+  },
+  "reporting": {
+    "enable_final_reflection": true,
+    "include_metrics": true,
+    "metrics_to_track": [
+      "total_turns",
+      "drones_used",
+      "hp_used",
+      "survival_rate",
+      "code_execution_success_rate",
+      "average_turn_time"
+    ],
+    "generate_markdown_report": true,
+    "report_dir": "./logs/reports"
+  },
+  "experimental": {
+    "_comment": "Experimental features, may be unstable",
+    "enable_memory": false,
+    "memory_size": 10,
+    "enable_tool_use": false,
+    "allowed_tools": [
+      "web_search",
+      "calculator"
+    ],
+    "enable_multi_agent": false,
+    "agent_roles": [
+      "explorer",
+      "analyst",
+      "decision_maker"
+    ]
+  }
+}

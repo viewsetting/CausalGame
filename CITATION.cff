@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you use CausalGame, please cite the paper below."
+title: "CausalGame: Benchmarking Causal Thinking of LLM Agents in Games"
+type: software
+license: MIT
+url: "https://causalgame.github.io"
+repository-code: "https://github.com/viewsetting/CausalGame"
+authors:
+  - family-names: Chen
+    given-names: Zhenhao
+  - family-names: Chen
+    given-names: Yongqiang
+  - family-names: Liu
+    given-names: Chenxi
+  - family-names: Yu
+    given-names: Junchi
+  - family-names: Song
+    given-names: Xiangchen
+  - family-names: Li
+    given-names: Zijian
+  - family-names: Li
+    given-names: Jialin
+  - family-names: Torr
+    given-names: Philip
+  - family-names: Han
+    given-names: Bo
+  - family-names: Zhang
+    given-names: Kun
+preferred-citation:
+  type: conference-paper
+  title: "CausalGame: Benchmarking Causal Thinking of LLM Agents in Games"
+  year: 2026
+  collection-title: "Proceedings of the 43rd International Conference on Machine Learning (ICML)"
+  notes: "Oral presentation"
+  authors:
+    - family-names: Chen
+      given-names: Zhenhao
+    - family-names: Chen
+      given-names: Yongqiang
+    - family-names: Liu
+      given-names: Chenxi
+    - family-names: Yu
+      given-names: Junchi
+    - family-names: Song
+      given-names: Xiangchen
+    - family-names: Li
+      given-names: Zijian
+    - family-names: Li
+      given-names: Jialin
+    - family-names: Torr
+      given-names: Philip
+    - family-names: Han
+      given-names: Bo
+    - family-names: Zhang
+      given-names: Kun
