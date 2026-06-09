@@ -406,7 +406,6 @@ Your goal is to optimize drone designs for survival in a hostile environment.
 ## AVAILABLE METHODS
 - `client.get_mission_data()` - Get flight history
 - `client.get_all_environments()` - Get environment data
-- `client.query_environment(query)` - Discover hidden variables
 - `client.deploy_drone_v2(design, count=1)` - Deploy test drones
 - `client.submit_final_design_v2(design)` - Final submission (once only!)
 

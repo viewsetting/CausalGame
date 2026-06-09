@@ -139,32 +139,6 @@ class CanyonClient:
                 environments[flight_id] = record["environment"]
         return environments
 
-    def query_environment(self, query: str) -> Dict[str, Any]:
-        """
-        Query the environment interpreter to discover hidden variables.
-
-        Use this to ask about environmental factors that may affect drone survival.
-        Newly discovered variables become visible in get_all_environments().
-
-        Args:
-            query: Natural language query about environment
-                   Examples:
-                   - "What measurements are being tracked?"
-                   - "What are the deployment zone characteristics?"
-                   - "Are there any hidden atmospheric conditions?"
-
-        Returns:
-            Interpreter response with discovered variables
-        """
-        try:
-            return self._post("/api/agent/query_environment", {"query": query})
-        except Exception:
-            return {
-                "status": "not_available",
-                "success": False,
-                "message": "Environment query not available in this experiment. Use deploy_drone to test hypotheses directly instead.",
-            }
-
     # ============================================================
     # Drone Deployment
     # ============================================================

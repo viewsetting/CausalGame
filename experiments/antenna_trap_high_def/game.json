@@ -1,7 +1,6 @@
 {
   "_comment": "Antenna Detection Trap - High Total DEF Bias",
   "_design_goal": "History shows high DEF designs, misleading agent into weight/agility trap.",
-
   "experiment": {
     "name": "antenna_trap_high_def",
     "display_name": "Antenna Trap (High DEF Bias)",
@@ -9,41 +8,40 @@
     "version": "2.0",
     "author": "CausalGame Team"
   },
-
   "resources": {
     "total_drone_budget": 200,
     "stage2_fleet_size": 1000,
     "victory_threshold": 0.75,
-    "env_query_budget": 10,
     "initial_observations": 50,
     "initial_observation_bias": "high_total_def",
     "_initial_observation_bias_comment": "All high DEF - misleads into weight trap",
     "stage1_deployment_budget": 10
   },
-
   "agent_visibility": {
     "hide_failed_drones": true
   },
-
   "scm": {
     "exogenous_variables": {
       "weather_pattern": {
         "distribution": "uniform",
-        "params": {"low": 0.0, "high": 1.0},
+        "params": {
+          "low": 0.0,
+          "high": 1.0
+        },
         "description": "Hidden storm intensity confounder"
       }
     },
     "parameters": {
       "storm_probability": 0.8,
-      "base_detection_clear": 0.20,
-      "base_detection_storm": 0.10,
+      "base_detection_clear": 0.2,
+      "base_detection_storm": 0.1,
       "combat_intensity_clear": 0.3,
       "combat_intensity_storm": 4.0,
       "antenna_emission_boost": 0.75,
-      "stealth_mode_reduction": 0.30,
+      "stealth_mode_reduction": 0.3,
       "wind_threshold_high": 35,
       "wind_threshold_low": 15,
-      "camera_evasion_bonus": 0.30,
+      "camera_evasion_bonus": 0.3,
       "camera_destroyed_detection_penalty": 6.0,
       "antenna_def_factor": 3.5,
       "camera_def_factor": 2.5,
@@ -52,7 +50,6 @@
       "gun_destroyed_damage_penalty": 4.0
     }
   },
-
   "agility_system": {
     "base_agility": 1.0,
     "linear_coefficient": 0.002,
@@ -60,31 +57,77 @@
     "min_agility": 0.1,
     "max_agility": 1.0
   },
-
   "def_reduction_factor": 0.9,
-
   "drone": {
     "components": {
-      "engine": {"hp": 100, "default_def": 20, "is_critical": true},
-      "cockpit": {"hp": 100, "default_def": 20, "is_critical": true},
-      "wing": {"hp": 80, "default_def": 15, "is_critical": true},
-      "body": {"hp": 80, "default_def": 15, "is_critical": true},
-      "antenna": {"hp": 50, "default_def": 10, "is_critical": false},
-      "camera": {"hp": 20, "default_def": 5, "is_critical": false},
-      "gun": {"hp": 30, "default_def": 5, "is_critical": false, "has_atk": true, "default_atk": 20}
+      "engine": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "cockpit": {
+        "hp": 100,
+        "default_def": 20,
+        "is_critical": true
+      },
+      "wing": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "body": {
+        "hp": 80,
+        "default_def": 15,
+        "is_critical": true
+      },
+      "antenna": {
+        "hp": 50,
+        "default_def": 10,
+        "is_critical": false
+      },
+      "camera": {
+        "hp": 20,
+        "default_def": 5,
+        "is_critical": false
+      },
+      "gun": {
+        "hp": 30,
+        "default_def": 5,
+        "is_critical": false,
+        "has_atk": true,
+        "default_atk": 20
+      }
     },
     "standard_design": {
-      "engine_def": 20, "cockpit_def": 20, "wing_def": 15, "body_def": 15
+      "engine_def": 20,
+      "cockpit_def": 20,
+      "wing_def": 15,
+      "body_def": 15
     },
     "total_default_def": 90
   },
-
   "visibility": {
-    "fields": {"hp": "hidden", "agility": "hidden", "detection_probability": "hidden", "def_values": "visible", "hit_count": "visible", "status": "visible"},
-    "agent_visible_override": ["def_values", "hit_count", "status", "environment"],
-    "agent_hidden_override": ["hp", "agility", "detection_probability", "signal_strength"]
+    "fields": {
+      "hp": "hidden",
+      "agility": "hidden",
+      "detection_probability": "hidden",
+      "def_values": "visible",
+      "hit_count": "visible",
+      "status": "visible"
+    },
+    "agent_visible_override": [
+      "def_values",
+      "hit_count",
+      "status",
+      "environment"
+    ],
+    "agent_hidden_override": [
+      "hp",
+      "agility",
+      "detection_probability",
+      "signal_strength"
+    ]
   },
-
   "side_information": {
     "mission_briefing": [
       "Configure DEF (armor) for each component.",

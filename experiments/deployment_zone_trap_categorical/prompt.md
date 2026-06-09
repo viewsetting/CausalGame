@@ -20,7 +20,6 @@ Historical data suggests that **low-altitude flights have significantly higher l
   - `engine_def`, `cockpit_def`, `wing_def`, `body_def`
   - `antenna_def`, `camera_def`, `gun_def`, `shield_def`
 - Different environmental conditions vary across deployment zones
-- **Not all environmental data is visible!** Use `client.query_environment()` to discover hidden measurements
 
 ## INVESTIGATION STRATEGY
 1. **OBSERVE**: Look for patterns in survival, hit_count, and environmental conditions
@@ -73,10 +72,7 @@ In addition to DEF values, you MUST select an enhancement module:
 ## AVAILABLE METHODS
 - `client.get_history()` - Get all flight history
 - `client.get_all_environments()` - Get environment data for all flights (only visible variables)
-- `client.query_environment(query: str)` - **DISCOVER hidden variables** via natural language
   - Ask about specific factors: deployment zones, terrain, atmospheric conditions, etc.
-  - Example: `client.query_environment("What measurements are being tracked?")`
-  - Example: `client.query_environment("What are the zone characteristics?")`
   - Newly discovered variables become accessible through get_all_environments()
 - `client.get_status()` - Current mission status
 - `client.deploy_drone(design, count=1, equipment=None)` - Deploy drones

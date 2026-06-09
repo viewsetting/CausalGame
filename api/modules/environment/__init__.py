@@ -6,7 +6,6 @@ This module contains:
 - SCM Registry: Factory for creating SCM instances
 - Individual SCM implementations in separate files
 - EnvironmentGenerator: Variable generation with discovery system
-- EnvironmentInterpreter: LLM-powered variable discovery interface
 
 Key principle: Only this module changes for different causal experiments.
 Game module remains fixed.
@@ -34,9 +33,8 @@ from .scm_registry import (
 from .default_scm import DefaultSCM
 from .antenna_trap_scm import AntennaTrapSCM
 
-# Import environment generator and interpreter
+# Import environment generator
 from .generator import EnvironmentGenerator
-from .interpreter import EnvironmentInterpreter
 
 __all__ = [
     # Base classes
@@ -55,5 +53,4 @@ __all__ = [
     'AntennaTrapSCM',
     # Environment utilities
     'EnvironmentGenerator',
-    'EnvironmentInterpreter',
 ]

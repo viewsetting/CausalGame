@@ -16,7 +16,6 @@ from .action_space import (
     AgentAction,
     DeployAction,
     SubmitAction,
-    QueryAction,
 )
 from .session import (
     AgentSession,
@@ -30,7 +29,6 @@ __all__ = [
     'AgentAction',
     'DeployAction',
     'SubmitAction',
-    'QueryAction',
     # Session
     'AgentSession',
     'SessionManager',

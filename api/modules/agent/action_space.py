@@ -29,7 +29,6 @@ class ActionType(Enum):
     """Types of actions agent can perform."""
     DEPLOY = "deploy"
     SUBMIT_FINAL = "submit_final"
-    QUERY_ENVIRONMENT = "query_environment"
     GET_STATUS = "get_status"
     GET_HISTORY = "get_history"
 
@@ -55,13 +54,6 @@ class SubmitAction(AgentAction):
     action_type: ActionType = ActionType.SUBMIT_FINAL
     design: Dict[str, int] = field(default_factory=dict)
     equipment: Dict[str, str] = field(default_factory=dict)  # slot -> choice_id
-
-
-@dataclass
-class QueryAction(AgentAction):
-    """Query environment data."""
-    action_type: ActionType = ActionType.QUERY_ENVIRONMENT
-    query: str = ""
 
 
 @dataclass

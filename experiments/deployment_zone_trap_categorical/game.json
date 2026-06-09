@@ -1,7 +1,6 @@
 {
   "_comment": "Deployment Zone Trap (Categorical) - Game Configuration",
   "_design_note": "Based on deployment_zone_trap but with categorical enhancement module selection. Agent must select correct DEF allocation AND correct enhancement module.",
-
   "experiment": {
     "name": "deployment_zone_trap_categorical",
     "display_name": "Deployment Zone Trap (Categorical)",
@@ -9,21 +8,17 @@
     "version": "1.0",
     "author": "CausalGame Team"
   },
-
   "resources": {
     "total_drone_budget": 200,
     "stage2_fleet_size": 1000,
     "victory_threshold": 0.75,
-    "env_query_budget": 10,
     "initial_observations": 50,
     "stage1_deployment_budget": 10
   },
-
   "agent_visibility": {
     "hide_failed_drones": true,
     "_comment": "Agent cannot see DESTROYED/LOST drones - must infer from deploy count vs return count"
   },
-
   "scm": {
     "exogenous_variables": {
       "mission_zone": {
@@ -33,7 +28,7 @@
     },
     "parameters": {
       "emi_base_failure_rate": 1.5,
-      "emi_threshold": 0.10,
+      "emi_threshold": 0.1,
       "shield_effectiveness": 0.015,
       "max_shield_reduction": 0.85,
       "comm_failure_loss_rate": 0.99,
@@ -45,7 +40,6 @@
       }
     }
   },
-
   "agility_system": {
     "base_agility": 1.0,
     "linear_coefficient": 0.002,
@@ -53,9 +47,7 @@
     "min_agility": 0.1,
     "max_agility": 1.0
   },
-
   "def_reduction_factor": 0.9,
-
   "drone": {
     "components": {
       "engine": {
@@ -115,7 +107,6 @@
     },
     "total_default_def": 70
   },
-
   "visibility": {
     "fields": {
       "hp": "hidden",
@@ -131,10 +122,25 @@
       "wind_resistance": "visible",
       "signal_strength": "visible"
     },
-    "agent_visible_override": ["def_values", "hit_count", "status", "altitude_band", "wind_resistance", "signal_strength", "temperature"],
-    "agent_hidden_override": ["hp", "agility", "detection_probability", "mission_zone", "emi_level", "comm_failure_prob", "effective_emi"]
+    "agent_visible_override": [
+      "def_values",
+      "hit_count",
+      "status",
+      "altitude_band",
+      "wind_resistance",
+      "signal_strength",
+      "temperature"
+    ],
+    "agent_hidden_override": [
+      "hp",
+      "agility",
+      "detection_probability",
+      "mission_zone",
+      "emi_level",
+      "comm_failure_prob",
+      "effective_emi"
+    ]
   },
-
   "side_information": {
     "_comment": "Hints for agent - designed to MISLEAD toward altitude trap",
     "mission_briefing": [
@@ -156,7 +162,6 @@
       "Radar boost module recommended for threat detection."
     ]
   },
-
   "trap_design": {
     "_comment": "Internal documentation - NOT visible to agent",
     "historical_parallel": "William Farr's altitude-cholera spurious correlation (1849)",
@@ -169,11 +174,15 @@
     },
     "categorical_trap": {
       "description": "5 enhancement modules, only 1 (signal_filter) provides critical EMI resistance",
-      "distractors": ["radar_boost", "thermal_shield", "power_core", "stealth_coating"],
+      "distractors": [
+        "radar_boost",
+        "thermal_shield",
+        "power_core",
+        "stealth_coating"
+      ],
       "solution": "signal_filter (provides noise_reduction effect)"
     }
   },
-
   "expected_performance": {
     "_comment": "Expected outcomes for different strategies (tested with 1000 drones each, gap ~29%)",
     "standard_design_wrong_module": {

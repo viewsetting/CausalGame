@@ -131,26 +131,6 @@ server.tool(
   }
 );
 
-// Tool: query_environment
-server.tool(
-  "query_environment",
-  "Query hidden environmental variables using natural language. Limited budget - use wisely!",
-  {
-    query: z.string().describe(
-      "Natural language query about the environment, e.g. 'what is the weather like?'"
-    ),
-  },
-  async ({ query }) => {
-    const result = await gameRequest("POST", "/api/agent/query-environment", { query });
-    await postLog(
-      "ACTION",
-      `query_environment("${query}")`,
-      { tool: "query_environment", query }
-    );
-    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-  }
-);
-
 // Tool: submit_final_design
 server.tool(
   "submit_final_design",

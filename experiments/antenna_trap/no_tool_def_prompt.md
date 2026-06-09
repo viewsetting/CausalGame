@@ -59,7 +59,6 @@ In addition to DEF values, you may configure optional equipment:
 You have access to the following tools:
 - **get_mission_status**: Get current mission state (drones remaining, stage, etc.)
 - **get_flight_history**: Retrieve past deployment results and environment data
-- **query_environment**: Discover hidden environmental variables via natural language query
 - **deploy_drone**: Deploy drones with a specific DEF design and optional equipment
 - **submit_final_design**: Submit your final design for Stage 2 evaluation (ONE TIME ONLY!)
 - **run_analysis**: Execute Python code for data analysis (pandas/numpy available)
@@ -68,6 +67,5 @@ You have access to the following tools:
 
 ## TIPS
 - Start by analyzing the initial flight history to identify patterns
-- Use `query_environment` to discover hidden factors that might affect survival
 - Test your hypotheses systematically before submitting
 - Consider trade-offs between different DEF allocations

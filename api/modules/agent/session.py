@@ -26,7 +26,6 @@ from .action_space import AgentActionSpace
 from ..environment.scm_base import CausalSCM
 from ..environment.scm_registry import get_scm_for_experiment
 from ..environment.generator import EnvironmentGenerator
-from ..environment.interpreter import EnvironmentInterpreter
 
 
 def load_experiment_config(experiment_name: str) -> Dict[str, Any]:
@@ -64,7 +63,6 @@ def load_experiment_config(experiment_name: str) -> Dict[str, Any]:
             'total_drone_budget': 200,
             'stage2_fleet_size': 1000,
             'victory_threshold': 0.55,
-            'env_query_budget': 10,
         }
     }
 
@@ -324,7 +322,6 @@ class SessionManager:
         self._sessions: Dict[str, AgentSession] = {}
         self._action_spaces: Dict[str, AgentActionSpace] = {}
         self._scms: Dict[str, CausalSCM] = {}
-        self._interpreters: Dict[str, EnvironmentInterpreter] = {}
         self._experiment_configs: Dict[str, Dict[str, Any]] = {}  # Cache for experiment configs
 
         # Default experiment
@@ -402,16 +399,6 @@ class SessionManager:
             action_space.generate_initial_observations(initial_obs_count)
             logger.info(f"Generated {initial_obs_count} initial observations for session {session_id}")
 
-        # Create environment interpreter for variable discovery
-        try:
-            generator = EnvironmentGenerator(experiment_name=experiment)
-            interpreter = EnvironmentInterpreter(generator)
-            self._interpreters[session_id] = interpreter
-            logger.info(f"Created interpreter for session {session_id}")
-        except Exception as e:
-            logger.warning(f"Could not create interpreter for session {session_id}: {e}")
-            # Interpreter is optional, session can work without it
-
         self._sessions[session_id] = session
         self._action_spaces[session_id] = action_space
 
@@ -430,9 +417,6 @@ class SessionManager:
         """Get action space for session."""
         return self._action_spaces.get(session_id)
 
-    def get_interpreter(self, session_id: str) -> Optional[EnvironmentInterpreter]:
-        """Get environment interpreter for session."""
-        return self._interpreters.get(session_id)
 
     def delete_session(self, session_id: str) -> bool:
         """Delete a session and its persistence file."""
@@ -440,8 +424,6 @@ class SessionManager:
             del self._sessions[session_id]
             if session_id in self._action_spaces:
                 del self._action_spaces[session_id]
-            if session_id in self._interpreters:
-                del self._interpreters[session_id]
             # Delete the session file
             self._delete_session_file(session_id)
             return True
@@ -534,15 +516,6 @@ class SessionManager:
                 action_space.generate_initial_observations(initial_obs_count)
                 logger.info(f"Generated {initial_obs_count} initial observations for default session")
 
-            # Create environment interpreter
-            try:
-                generator = EnvironmentGenerator(experiment_name=self.default_experiment)
-                interpreter = EnvironmentInterpreter(generator)
-                self._interpreters[default_id] = interpreter
-                logger.info(f"Created interpreter for default session")
-            except Exception as e:
-                logger.warning(f"Could not create interpreter for default session: {e}")
-
             self._sessions[default_id] = session
             self._action_spaces[default_id] = action_space
 
@@ -571,11 +544,6 @@ class SessionManager:
                 action_space.generate_initial_observations(initial_obs_count)
                 logger.info(f"Regenerated {initial_obs_count} initial observations for session {session_id}")
 
-            # Reset interpreter if exists
-            interpreter = self._interpreters.get(session_id)
-            if interpreter:
-                interpreter.reset()
-                logger.info(f"Reset interpreter for session {session_id}")
 
             # Save reset state
             self._save_session(session_id)
@@ -633,13 +601,6 @@ class SessionManager:
             default_session.query_history.clear()
             default_session.logs.clear()
             default_session.final_result = None
-            try:
-                from ..environment.generator import EnvironmentGenerator
-                from ..environment.interpreter import EnvironmentInterpreter
-                generator = EnvironmentGenerator(experiment_name=experiment_name)
-                self._interpreters['default'] = EnvironmentInterpreter(generator)
-            except Exception as e:
-                logger.warning(f"Could not recreate interpreter: {e}")
             logger.info(f"Switched default session to experiment {experiment_name}")
 
     def cleanup_inactive(self, max_age_seconds: int = 3600) -> int:
@@ -735,14 +696,6 @@ class SessionManager:
                 action_space._drones_used = session.drones_used
                 action_space._deployments_used = session.deployments_used  # Restore deployment count
                 self._action_spaces[session_id] = action_space
-
-                # Recreate interpreter
-                try:
-                    generator = EnvironmentGenerator(experiment_name=experiment)
-                    interpreter = EnvironmentInterpreter(generator)
-                    self._interpreters[session_id] = interpreter
-                except Exception:
-                    pass
 
                 loaded_count += 1
                 logger.info(f"Restored session {session_id}")

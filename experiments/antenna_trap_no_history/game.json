@@ -1,7 +1,6 @@
 {
   "_comment": "Antenna Detection Trap - Game Configuration (V2.0)",
   "_design_goal": "Agent must discover that antenna emits signal leading to detection. Sacrificing antenna for stealth mode is optimal.",
-
   "experiment": {
     "name": "antenna_trap_no_history",
     "display_name": "Antenna Trap (No History)",
@@ -9,43 +8,42 @@
     "version": "2.0",
     "author": "CausalGame Team"
   },
-
   "resources": {
     "total_drone_budget": 200,
     "stage2_fleet_size": 1000,
     "victory_threshold": 0.75,
-    "env_query_budget": 10,
     "initial_observations": 0,
     "initial_observation_bias": "none",
     "_initial_observation_bias_comment": "No history - agent starts from scratch",
     "stage1_deployment_budget": 10,
     "_stage1_deployment_budget_comment": "Maximum number of deploy_drone calls allowed in Stage 1"
   },
-
   "agent_visibility": {
     "hide_failed_drones": true,
     "_comment": "If true, agent cannot see DESTROYED/LOST drones in history and deploy results"
   },
-
   "scm": {
     "exogenous_variables": {
       "weather_pattern": {
         "distribution": "uniform",
-        "params": {"low": 0.0, "high": 1.0},
+        "params": {
+          "low": 0.0,
+          "high": 1.0
+        },
         "description": "Hidden storm intensity confounder"
       }
     },
     "parameters": {
       "storm_probability": 0.8,
-      "base_detection_clear": 0.20,
-      "base_detection_storm": 0.10,
+      "base_detection_clear": 0.2,
+      "base_detection_storm": 0.1,
       "combat_intensity_clear": 0.3,
       "combat_intensity_storm": 4.0,
       "antenna_emission_boost": 0.75,
-      "stealth_mode_reduction": 0.30,
+      "stealth_mode_reduction": 0.3,
       "wind_threshold_high": 35,
       "wind_threshold_low": 15,
-      "camera_evasion_bonus": 0.30,
+      "camera_evasion_bonus": 0.3,
       "camera_destroyed_detection_penalty": 6.0,
       "antenna_def_factor": 3.5,
       "camera_def_factor": 2.5,
@@ -54,7 +52,6 @@
       "gun_destroyed_damage_penalty": 4.0
     }
   },
-
   "agility_system": {
     "base_agility": 1.0,
     "linear_coefficient": 0.002,
@@ -62,9 +59,7 @@
     "min_agility": 0.1,
     "max_agility": 1.0
   },
-
   "def_reduction_factor": 0.9,
-
   "drone": {
     "components": {
       "engine": {
@@ -117,7 +112,6 @@
     },
     "total_default_def": 90
   },
-
   "visibility": {
     "fields": {
       "hp": "hidden",
@@ -127,10 +121,19 @@
       "hit_count": "visible",
       "status": "visible"
     },
-    "agent_visible_override": ["def_values", "hit_count", "status", "environment"],
-    "agent_hidden_override": ["hp", "agility", "detection_probability", "signal_strength"]
+    "agent_visible_override": [
+      "def_values",
+      "hit_count",
+      "status",
+      "environment"
+    ],
+    "agent_hidden_override": [
+      "hp",
+      "agility",
+      "detection_probability",
+      "signal_strength"
+    ]
   },
-
   "side_information": {
     "_comment": "Hints for agent (misleading on purpose)",
     "mission_briefing": [
@@ -145,7 +148,6 @@
       "Antenna transmits communication signals."
     ]
   },
-
   "trap_design": {
     "_comment": "Internal documentation only",
     "primary_trap": {
@@ -173,7 +175,6 @@
       "agility": "total_def -> agility(hidden) -> hit_probability -> hit_count"
     }
   },
-
   "expected_performance": {
     "_comment": "Expected outcomes for different strategies (updated 2026-01-21)",
     "standard_design": {

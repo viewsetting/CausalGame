@@ -128,34 +128,6 @@ async def legacy_session_history(session_id: str = None):
     return all_history
 
 
-@legacy_router.get("/api/query_history")
-async def legacy_query_history(session_id: str = None):
-    """
-    Environment interpreter query history.
-
-    Returns history of agent queries to the environment interpreter.
-    If session_id is provided, returns only that session's data.
-    Otherwise returns data from all active sessions.
-    """
-    from .modules.agent.endpoints import get_session_manager
-
-    manager = get_session_manager()
-
-    # If session_id provided, return only that session's data
-    if session_id:
-        session = manager.get_session(session_id)
-        if session:
-            return session.query_history
-        return []
-
-    # Collect query history from all sessions
-    all_history = []
-    for sid, session in manager._sessions.items():
-        all_history.extend(session.query_history)
-
-    return all_history
-
-
 @legacy_router.post("/api/deploy_drone")
 async def legacy_deploy_drone(request: Dict[str, Any]):
     """

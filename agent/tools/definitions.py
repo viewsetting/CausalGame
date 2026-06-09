@@ -13,7 +13,7 @@ from typing import Dict, List, Any, Optional
 class ToolCategory(Enum):
     """Categories of tools for organization and filtering."""
     READ = "read"           # Data retrieval (get_status, get_history)
-    DISCOVERY = "discovery"  # Environment exploration (query_environment)
+    DISCOVERY = "discovery"  # Environment exploration
     ACTION = "action"        # State-changing operations (deploy_drone, submit_final_design)
     ANALYSIS = "analysis"    # Data analysis (reserved for future use)
 
@@ -132,21 +132,6 @@ CANYON_TOOLS: List[ToolDefinition] = [
         description="Get the action space configuration showing valid parameter ranges for drone design (DEF values) and available equipment options.",
         category=ToolCategory.READ,
         parameters=[],
-    ),
-
-    # DISCOVERY Tools
-    ToolDefinition(
-        name="query_environment",
-        description="Query the environment interpreter to discover hidden variables that may affect drone survival. Ask about weather, atmospheric conditions, or any environmental factors.",
-        category=ToolCategory.DISCOVERY,
-        parameters=[
-            ToolParameter(
-                name="query",
-                type="string",
-                description="Natural language query about environment. Examples: 'What weather data is available?', 'Are there any hidden atmospheric conditions?'",
-                required=True,
-            ),
-        ],
     ),
 
     # ACTION Tools

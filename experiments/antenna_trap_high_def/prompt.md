@@ -12,7 +12,6 @@ The simulation is a "black box" - you must discover the rules through observatio
   - `engine_def`, `cockpit_def`, `wing_def`, `body_def`
   - `antenna_def`, `camera_def`, `gun_def`
 - Different environmental conditions may affect drone performance
-- **Not all environmental data is visible!** Use `client.query_environment()` to discover hidden measurements
 ## INVESTIGATION STRATEGY
 1. **OBSERVE**: Look for patterns in survival, hit_count, and environmental conditions
 2. **DISCOVER**: Query for hidden measurements (weather, atmospheric, etc.)
@@ -62,10 +61,7 @@ In addition to DEF values, you may configure optional equipment:
 ## AVAILABLE METHODS
 - `client.get_history()` - Get all flight history
 - `client.get_all_environments()` - Get environment data for all flights (only visible variables)
-- `client.query_environment(query: str)` - **DISCOVER hidden variables** via natural language
   - Ask about specific categories: weather, atmospheric, lunar, radiation, temporal
-  - Example: `client.query_environment("Do you have moon phase data?")`
-  - Example: `client.query_environment("What atmospheric pressure measurements exist?")`
   - Newly discovered variables become accessible through get_all_environments()
 - `client.get_status()` - Current mission status
 - `client.deploy_drone(design, count=1, equipment=None)` - Deploy drones

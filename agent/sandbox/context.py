@@ -32,7 +32,6 @@ class ClientStub:
             "get_status": "get_status",
             "get_all_environments": "get_all_environments",
             "get_mission_environment": "get_all_environments",
-            "query_environment": "query_environment",
             "deploy_drone": "deploy_drone",
             "submit_final_design": "submit_final_design",
             "get_action_space": "get_action_space",

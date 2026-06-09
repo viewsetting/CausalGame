@@ -125,7 +125,6 @@ class APIToolExecutor:
             "get_status": self._handle_get_status,
             "get_history": self._handle_get_history,
             "get_action_space": self._handle_get_action_space,
-            "query_environment": self._handle_query_environment,
             "deploy_drone": self._handle_deploy_drone,
             "submit_final_design": self._handle_submit_final_design,
         }
@@ -146,11 +145,6 @@ class APIToolExecutor:
     def _handle_get_action_space(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle get_action_space tool call."""
         return self._client.get_action_space()
-
-    def _handle_query_environment(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle query_environment tool call."""
-        query = params.get("query", "")
-        return self._client.query_environment(query)
 
     def _handle_deploy_drone(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle deploy_drone tool call."""

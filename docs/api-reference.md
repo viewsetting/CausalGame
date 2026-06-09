@@ -198,43 +198,6 @@ Get flight history (agent view, filtered).
 
 ---
 
-### POST `/api/agent/query_environment`
-
-Query environment interpreter to discover hidden variables.
-
-**Headers:**
-- `X-Session-ID`: Session ID (optional)
-
-**Request Body:**
-```json
-{
-  "query": "What weather data do you have?"
-}
-```
-
-Or batch queries:
-```json
-{
-  "queries": [
-    "What weather data do you have?",
-    "Do you have altitude information?"
-  ]
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "I can provide weather data including: temperature, humidity, wind_speed...",
-  "discovered_variables": ["temperature", "humidity", "wind_speed"],
-  "env_queries_used": 3,
-  "env_queries_remaining": 7
-}
-```
-
----
-
 ### POST `/api/agent/log`
 
 Add a log entry from agent.

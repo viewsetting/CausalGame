@@ -157,7 +157,6 @@ class AgentOrchestrator:
 
         # Track exploration progress for early submission guard
         self.deployments_made = 0
-        self.queries_made = 0
 
         # Grace period tracking (when resources exhausted, agent gets extra turns to submit)
         self.resources_exhausted = False
@@ -413,8 +412,7 @@ Note: Only relative paths within workspace are allowed. Absolute paths or path t
                                     status=ToolResultStatus.ERROR,
                                     error=(
                                         "Cannot submit final design without exploration! "
-                                        "You must first use 'deploy_drone' to test different designs "
-                                        "and 'query_environment' to discover hidden factors. "
+                                        "You must first use 'deploy_drone' to test different designs. "
                                         "Analyze the data before submitting."
                                     ),
                                 )
@@ -440,8 +438,6 @@ Note: Only relative paths within workspace are allowed. Absolute paths or path t
                             # Track exploration progress
                             if tool_call.name == "deploy_drone" and tool_result.status == ToolResultStatus.SUCCESS:
                                 self.deployments_made += 1
-                            elif tool_call.name == "query_environment":
-                                self.queries_made += 1
 
                         result.tool_results.append(tool_result)
 
@@ -613,46 +609,8 @@ Note: Only relative paths within workspace are allowed. Absolute paths or path t
                 "victory": data.get("victory"),
                 "tool_call": True,
             })
-        elif tool_call.name == "query_environment":
-            # Special INTERPRETER log for environment queries
-            data = tool_result.data or {}
-            query = tool_call.arguments.get("query", "")
-            success = data.get("success", False)
-            message = data.get("message", "")
-            discovered = data.get("discovered_variables", [])
-            queries_used = data.get("env_queries_used", 0)
-            queries_remaining = data.get("env_queries_remaining", 0)
-
-            # Check if interpreter is not available (experiment doesn't support this feature)
-            if data.get("status") == "not_available":
-                # Log as INFO, not ERROR - this is an experiment limitation, not an agent error
-                self.handler.log("THOUGHT", f"Note: {message}. Continuing with other tools.", metadata={
-                    "tool_name": tool_call.name,
-                    "query": query,
-                    "reason": "interpreter_not_available",
-                    "note": "This experiment does not support environment queries - use deploy_drone to test hypotheses directly.",
-                })
-                return
-
-            # Format content for display
-            content = f"Query: {query}\n\nResponse: {message}"
-            if discovered:
-                content += f"\n\nDiscovered variables: {', '.join(discovered)}"
-            content += f"\n\n[Queries: {queries_used} used, {queries_remaining} remaining]"
-
-            # Use ERROR type if query was rejected, INTERPRETER type otherwise
-            log_type = "INTERPRETER" if success else "ERROR"
-            self.handler.log(log_type, content, metadata={
-                "query": query,
-                "success": success,
-                "discovered": discovered,
-                "response": message,
-                "env_queries_used": queries_used,
-                "env_queries_remaining": queries_remaining,
-                "tool_call": True,
-            })
         else:
-            # Log other tool results (get_status, get_history, query_environment, etc.)
+            # Log other tool results (get_status, get_history, etc.)
             # Truncate large results for display
             result_str = tool_result.to_string()
             if len(result_str) > 500:
@@ -795,25 +753,7 @@ Note: Only relative paths within workspace are allowed. Absolute paths or path t
 
         Filters out tools that aren't supported by the current experiment.
         """
-        try:
-            status = self.client.get_status()
-            # Check if query_environment is available
-            # It's available if env_query_budget > 0 and there's remaining budget
-            env_query_budget = status.get("env_query_budget", 0)
-            has_query_env = env_query_budget > 0
-        except Exception:
-            # If we can't get status, assume all tools are available
-            has_query_env = True
-
-        # Filter tools based on capabilities
-        available = []
-        for tool in CANYON_TOOLS:
-            if tool.name == "query_environment" and not has_query_env:
-                # Skip query_environment if not available
-                continue
-            available.append(tool)
-
-        return available
+        return list(CANYON_TOOLS)
 
     def get_available_tools(self) -> List[ToolDefinition]:
         """Get list of available tools."""

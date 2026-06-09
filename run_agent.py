@@ -349,9 +349,7 @@ The simulation is a "black box" - you do not know the rules, but you can learn t
 
 - OBSERVE: Look for patterns in what remains and what is broken.
 - DISCOVER: **Not all environmental data is initially visible!**
-  - Use `client.query_environment("your question")` to discover hidden measurements.
   - Ask about weather, atmospheric conditions, or any environmental factors.
-  - Example: `client.query_environment("What weather data is available?")`
   - Newly discovered variables become accessible through the API.
 - CORRELATE: **Query environmental data** for past missions.
   - EFFICIENCY TIP: Use `client.get_all_environments()` to fetch ALL environmental data at once.
@@ -385,7 +383,6 @@ AVAILABLE METHODS:
 - `client.get_history() -> List[Dict]`: Historical flight logs
 - `client.get_mission_environment(mission_id: str) -> Dict`: Single environment (only visible variables)
 - `client.get_all_environments() -> Dict[str, Dict]`: All environments at once (only visible variables)
-- `client.query_environment(query: str) -> Dict`: Discover hidden environmental variables via natural language
 - `client.get_discovery_stats() -> Dict`: Check discovery progress and statistics
 - `client.deploy_drone(design: Dict[str, int], count: int) -> Dict`: Deploy drones
 - `client.get_status() -> Dict`: Current budget status
@@ -512,7 +509,6 @@ Your goal is to IMPROVE this survival rate by finding the optimal drone design.
 
 **IMPORTANT WORKFLOW:**
 1. **EXPLORE FIRST**: Use `get_history` tool to get data, then analyze with pandas in code
-2. **DISCOVER**: Use `query_environment` tool to find hidden environmental factors
 3. **TEST HYPOTHESES**: Use `deploy_drone` tool to test different designs (you have many drones!)
 4. **ITERATE**: Analyze results and refine your design
 5. **SUBMIT ONLY AFTER EXPLORATION**: Use `submit_final_design` tool ONLY when you have gathered enough data
@@ -618,7 +614,6 @@ INSTRUCTION:
                     else:
                         instruction = """INSTRUCTION:
 - Continue exploring with `deploy_drone` to gather more data.
-- Use `query_environment` to discover hidden factors.
 - Analyze patterns before optimizing your design.
 - Only submit when you have sufficient evidence for your design choices."""
 
@@ -974,9 +969,7 @@ The simulation is a "black box" - you do not know the rules, but you can learn t
 
 - OBSERVE: Look for patterns in what remains and what is broken.
 - DISCOVER: **Not all environmental data is initially visible!**
-  - Use `client.query_environment("your question")` to discover hidden measurements.
   - Ask about weather, atmospheric conditions, or any environmental factors.
-  - Example: `client.query_environment("What weather data is available?")`
   - Newly discovered variables become accessible through the API.
 - CORRELATE: **Query environmental data** for past missions.
   - EFFICIENCY TIP: Use `client.get_all_environments()` to fetch ALL environmental data at once.
@@ -1010,7 +1003,6 @@ AVAILABLE METHODS:
 - `client.get_history() -> List[Dict]`: Historical flight logs
 - `client.get_mission_environment(mission_id: str) -> Dict`: Single environment (only visible variables)
 - `client.get_all_environments() -> Dict[str, Dict]`: All environments at once (only visible variables)
-- `client.query_environment(query: str) -> Dict`: Discover hidden environmental variables via natural language
 - `client.get_discovery_stats() -> Dict`: Check discovery progress and statistics
 - `client.deploy_drone(design: Dict[str, int], count: int) -> Dict`: Deploy drones
 - `client.get_status() -> Dict`: Current budget status
@@ -1179,7 +1171,6 @@ Your goal is to IMPROVE this survival rate by finding the optimal drone design.
 
 **IMPORTANT WORKFLOW:**
 1. **EXPLORE FIRST**: Use `get_history` tool to get data, then analyze with pandas in code
-2. **DISCOVER**: Use `query_environment` tool to find hidden environmental factors
 3. **TEST HYPOTHESES**: Use `deploy_drone` tool to test different designs (you have many drones!)
 4. **ITERATE**: Analyze results and refine your design
 5. **SUBMIT ONLY AFTER EXPLORATION**: Use `submit_final_design` tool ONLY when you have gathered enough data
@@ -1262,7 +1253,6 @@ Please continue your analysis and experimentation.
                     else:
                         instruction = """INSTRUCTION:
 - Continue exploring with `deploy_drone` to gather more data.
-- Use `query_environment` to discover hidden factors.
 - Analyze patterns before optimizing your design.
 - Only submit when you have sufficient evidence for your design choices."""
 

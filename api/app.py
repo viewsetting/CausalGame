@@ -76,7 +76,6 @@ def load_experiment_config(experiment_name: str) -> Dict[str, Any]:
             'total_drone_budget': 200,
             'stage2_fleet_size': 1000,
             'victory_threshold': 0.55,
-            'env_query_budget': 10,
         },
         'agility_system': {
             'base_agility': 1.0,

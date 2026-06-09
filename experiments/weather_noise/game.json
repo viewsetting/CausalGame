@@ -1,7 +1,6 @@
 {
   "_comment": "Weather Noise - Observation Noise Varies with Weather",
   "_design_goal": "Agent must handle weather-dependent observation noise. Rainy=high noise (20%), Sunny=low noise (5%).",
-
   "experiment": {
     "name": "weather_noise",
     "display_name": "Weather Noise Experiment",
@@ -9,22 +8,18 @@
     "version": "1.0",
     "author": "CausalGame Team"
   },
-
   "resources": {
     "total_drone_budget": 200,
     "stage2_fleet_size": 1000,
     "victory_threshold": 0.55,
-    "env_query_budget": 10,
     "initial_observations": 50,
     "stage1_deployment_budget": 10
   },
-
   "agent_visibility": {
     "hide_failed_drones": false,
     "show_def_remaining": true,
     "_comment": "Show all drones and DEF remaining values (but they may be noisy)"
   },
-
   "scm": {
     "_comment": "Weather Noise SCM - same survival mechanism as weather_defense, plus observation noise",
     "parameters": {
@@ -32,22 +27,19 @@
       "_stage2": "Evaluation phase - 30% storms = clearer data",
       "storm_probability_stage1": 0.7,
       "storm_probability_stage2": 0.3,
-
       "_noise_parameters": "Observation noise as standard deviation ratio",
-      "noise_rain": 0.20,
+      "noise_rain": 0.2,
       "noise_clear": 0.05,
-
       "_survival_mechanism": "Same as weather_defense",
       "storm_antenna_damage_base": 80,
       "antenna_def_protection_factor": 2.5,
       "antenna_def_protection_cap": 70,
       "antenna_signal_boost_per_def": 0.035,
-      "antenna_signal_boost_cap": 0.80,
+      "antenna_signal_boost_cap": 0.8,
       "engine_def_protection_factor": 2.5,
       "engine_damage_base": 50
     }
   },
-
   "agility_system": {
     "base_agility": 1.0,
     "linear_coefficient": 0.0,
@@ -55,9 +47,7 @@
     "min_agility": 1.0,
     "max_agility": 1.0
   },
-
   "def_reduction_factor": 0.9,
-
   "drone": {
     "components": {
       "engine": {
@@ -109,7 +99,6 @@
     },
     "total_default_def": 90
   },
-
   "visibility": {
     "fields": {
       "hp": "hidden",
@@ -119,10 +108,25 @@
       "hit_count": "visible",
       "status": "visible"
     },
-    "agent_visible_override": ["def_values", "hit_count", "status", "environment", "engine_def", "cockpit_def", "wing_def", "body_def", "antenna_def", "camera_def", "gun_def"],
-    "agent_hidden_override": ["hp", "agility", "detection_probability"]
+    "agent_visible_override": [
+      "def_values",
+      "hit_count",
+      "status",
+      "environment",
+      "engine_def",
+      "cockpit_def",
+      "wing_def",
+      "body_def",
+      "antenna_def",
+      "camera_def",
+      "gun_def"
+    ],
+    "agent_hidden_override": [
+      "hp",
+      "agility",
+      "detection_probability"
+    ]
   },
-
   "side_information": {
     "_comment": "Mission briefing (agent sees this)",
     "mission_briefing": [
@@ -137,7 +141,6 @@
       "Data collected during different conditions may have different reliability."
     ]
   },
-
   "trap_design": {
     "_comment": "Internal documentation only - not shown to agent",
     "primary_trap": {
@@ -158,9 +161,13 @@
     },
     "optimal_strategy": "Deploy more drones in rainy conditions to average out noise, use sunny data for reliable analysis"
   },
-
   "metadata": {
-    "tags": ["noise", "weather", "causal_discovery", "observation_quality"],
+    "tags": [
+      "noise",
+      "weather",
+      "causal_discovery",
+      "observation_quality"
+    ],
     "difficulty": "hard",
     "research_questions": [
       "Can agent identify that rainy data has lower quality?",
