@@ -139,10 +139,7 @@ uvicorn api.app:app --reload --port 8000
 ### Production (Docker)
 ```bash
 docker build -t causalgame .
-docker run -p 8000:8000 causalgame
-# or
-docker build -t causalgame .
-docker run -d -p 8000:80 \
+docker run -d -p 8000:8000 \
   -v $(pwd)/agent_records:/app/agent_records \
   -e CAUSALGAME_EXPERIMENT=antenna_trap \
   causalgame
