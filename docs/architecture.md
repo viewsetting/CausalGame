@@ -5,11 +5,15 @@
 CausalGame is an AI agent testbed for causal reasoning challenges. The system presents a cyberpunk drone mission scenario where agents must discover causal structure (not just correlations) to succeed.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   AI Agents     │────▶│  FastAPI Backend│────▶│  React Frontend │
-│  (Python/LLM)   │◀────│   (Simulation)  │◀────│   (Dashboard)   │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┌─────────────────┐     ┌─────────────────┐
+│   AI Agents     │────▶│  FastAPI Backend│
+│  (Python/LLM)   │◀────│   (Simulation)  │
+└─────────────────┘     └─────────────────┘
 ```
+
+> **Note:** an internal React mission-control dashboard exists but is **not included
+> in this release** — only the simulation backend and the agent harness are open
+> source. The admin API endpoints it consumes remain available.
 
 ## Component Architecture
 
@@ -27,17 +31,6 @@ api/
     ├── agent/             # Agent interaction
     ├── environment/       # SCM system
     └── game/              # Judgment logic
-```
-
-### Frontend (React + Vite)
-
-```
-src/
-├── App.tsx                # Main dashboard
-├── components/            # UI components
-├── context/               # React context providers
-├── services/              # API client services
-└── types.ts               # Shared type definitions
 ```
 
 ### Agent System
@@ -140,16 +133,13 @@ Experiments defined in `experiments/<name>/game.json`:
 
 ### Development
 ```bash
-# Backend
 uvicorn api.app:app --reload --port 8000
-
-# Frontend
-npm run dev  # Port 3000, proxies /api to 8000
 ```
 
 ### Production (Docker)
 ```bash
-./build_and_run.sh
+docker build -t causalgame .
+docker run -p 8000:8000 causalgame
 # or
 docker build -t causalgame .
 docker run -d -p 8000:80 \
