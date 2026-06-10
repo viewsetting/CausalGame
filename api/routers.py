@@ -276,7 +276,7 @@ async def v2_mission_status():
 
     return {
         "api_version": "v2",
-        "experiment_name": experiment_name,
+        "experiment_name": "mission",
         "drones_remaining": status['drones_remaining'],
         "total_drone_budget": status['total_drones'],
         "total_drones": status['total_drones'],
@@ -286,7 +286,7 @@ async def v2_mission_status():
         "standard_design": standard_design,
         "stage1_deployment_budget": stage1_deployment_budget,
         "experiment": {
-            "name": experiment_name,
+            "name": "mission",
         }
     }
 
@@ -315,14 +315,14 @@ async def v2_get_action_space():
         config = get_action_space(experiment_name)
         return {
             "api_version": "v2",
-            "experiment_name": experiment_name,
+            "experiment_name": "mission",
             "action_space": config.get_agent_view(),
             "defaults": config.get_defaults(),
         }
     except Exception as e:
         return {
             "api_version": "v2",
-            "experiment_name": experiment_name,
+            "experiment_name": "mission",
             "error": str(e),
             "action_space": None,
         }
