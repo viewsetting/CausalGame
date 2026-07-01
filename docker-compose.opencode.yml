@@ -13,7 +13,8 @@ services:
     networks:
       - canyon-net
     healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:80/api/admin/experiments')"]
+      # /openapi.json is unauthenticated; /api/admin/* now requires X-Admin-Token
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:80/openapi.json')"]
       interval: 5s
       timeout: 5s
       retries: 15

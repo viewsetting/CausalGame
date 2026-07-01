@@ -29,10 +29,16 @@ from ..modules.agent.endpoints import get_session_manager
 from ..modules.agent.action_space import DeployAction
 from ..modules.environment.scm_registry import list_experiments, get_scm_info
 from ..utils.timezone import get_timezone_name, now_iso
+from ..security import require_admin_token
 
 
-# Router for admin endpoints
-router = APIRouter(prefix="/api/admin", tags=["admin"])
+# Router for admin endpoints. Every route on this prefix requires a valid
+# X-Admin-Token header — see api/security.py.
+router = APIRouter(
+    prefix="/api/admin",
+    tags=["admin"],
+    dependencies=[Depends(require_admin_token)],
+)
 
 
 # ============================================================

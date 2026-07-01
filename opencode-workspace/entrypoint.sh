@@ -49,10 +49,19 @@ else
 fi
 set -e  # Restore strict mode
 
+# ── Admin token: bootstrap only, then scrub from env before opencode starts ──
+# The operator injects ADMIN_TOKEN via docker run -e; entrypoint uses it here
+# for legitimate switch/health calls, then unsets it so the LLM shell cannot
+# read it via `env` or `printenv` and hit /api/admin/* on its own.
+ADMIN_HDR=()
+if [ -n "${ADMIN_TOKEN:-}" ]; then
+    ADMIN_HDR=(-H "X-Admin-Token: ${ADMIN_TOKEN}")
+fi
+
 # ── Wait for game backend ──
 echo "[setup] Waiting for game backend..."
 for i in $(seq 1 30); do
-    if curl -sf "${GAME_API}/api/admin/experiments" > /dev/null 2>&1; then
+    if curl -sf "${ADMIN_HDR[@]}" "${GAME_API}/api/admin/experiments" > /dev/null 2>&1; then
         echo "[setup] Game backend is ready."
         break
     fi
@@ -64,7 +73,7 @@ done
 
 # ── Switch experiment on backend ──
 echo "[setup] Switching backend to experiment: ${EXPERIMENT}"
-curl -sf -X POST "${GAME_API}/api/admin/experiment/switch?experiment_name=${EXPERIMENT}" > /dev/null 2>&1 || true
+curl -sf -X POST "${ADMIN_HDR[@]}" "${GAME_API}/api/admin/experiment/switch?experiment_name=${EXPERIMENT}" > /dev/null 2>&1 || true
 
 # ── Pre-register game session ──
 echo "[setup] Registering game session..."
@@ -227,6 +236,10 @@ HEREDOC
 
 echo "[setup] Setup complete."
 echo ""
+
+# ── Scrub ADMIN_TOKEN before handing control to opencode/LLM ──
+unset ADMIN_TOKEN
+ADMIN_HDR=()
 
 # ── Start ──
 case "${1:-serve}" in

@@ -30,6 +30,14 @@ from .routers import setup_routers
 from .modules.agent.session import SessionManager
 from .modules.agent.endpoints import set_session_manager
 from .modules.environment.scm_registry import get_scm_for_experiment
+from .security import ensure_admin_token_in_env
+
+# Load .env before touching any os.environ lookups below.
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv()
+except ImportError:
+    pass
 
 
 # Logging setup
@@ -126,6 +134,7 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events.
     """
     # Startup
+    ensure_admin_token_in_env()
     experiment_name = get_experiment_name()
     app_state.initialize(experiment_name)
     logger.info(f"CausalGame v2.0 starting with experiment: {experiment_name}")

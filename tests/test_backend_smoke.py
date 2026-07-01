@@ -54,9 +54,21 @@ class TestBackendSmoke(unittest.TestCase):
         data = response.json()
         self.assertIsInstance(data, dict)
 
-    def test_admin_test_deploy(self):
+    def test_admin_test_deploy_requires_token(self):
+        # Without the token: forbidden.
         response = self.client.post(
             "/api/admin/test-deploy",
+            json={"design": {"engine_def": 20, "antenna_def": 10}, "count": 5},
+        )
+        self.assertEqual(response.status_code, 403, response.text)
+
+    def test_admin_test_deploy_with_token(self):
+        # With the auto-bootstrapped token: works as before.
+        token = os.environ.get("ADMIN_TOKEN")
+        self.assertTrue(token, "ADMIN_TOKEN should be bootstrapped at startup")
+        response = self.client.post(
+            "/api/admin/test-deploy",
+            headers={"X-Admin-Token": token},
             json={"design": {"engine_def": 20, "antenna_def": 10}, "count": 5},
         )
         self.assertEqual(response.status_code, 200, response.text)
